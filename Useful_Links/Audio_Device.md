@@ -1,3 +1,7 @@
+library of many audio functions (download the git as zip and upload it in the ide):
+
+https://github.com/pschatzmann/arduino-audio-tools
+
 getting audio input:
 
 1. https://diyi0t.com/i2s-sound-tutorial-for-esp32/
@@ -11,3 +15,6 @@ getting audio input:
 5. https://youtu.be/a936wNgtcRA
 
 6. https://youtu.be/pPh3_ciEmzs
+
+7. this is the first part and there are more parts of it:
+    https://www.youtube.com/watch?v=m8LwPNXqK9o
