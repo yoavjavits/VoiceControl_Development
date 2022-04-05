@@ -9,7 +9,7 @@
 
 #include <Arduino.h>
 // Define LED pin
-#define LED_PIN 13
+#define LED_PIN 2
 
 void blink_led(int LED, int delaytime)
 {
