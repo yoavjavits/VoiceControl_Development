@@ -18,3 +18,6 @@ https://github.com/atomic14/diy-alexa
 
 Get I2S Sampling:
 https://github.com/atomic14/esp32_audio/tree/master/i2s_sampling
+
+Walkie-Talkie:
+https://github.com/atomic14/esp32-walkie-talkie
