@@ -6,3 +6,5 @@ WakeDetectorWord/training_spectrogram.npz
 WakeDetectorWord/test_spectrogram.zip
 
 WakeDetectorWord/test_spectrogram.npz
+
+WakeDetectorWord/MakeGoWords/
