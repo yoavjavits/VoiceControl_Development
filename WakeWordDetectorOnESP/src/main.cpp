@@ -49,7 +49,7 @@ void applicationTask(void *param)
 
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(1000);
   Serial.println("Starting up");
   
