@@ -3,13 +3,13 @@
 #include <driver/i2s.h>
 #include <esp_task_wdt.h>
 #include "I2SMicSampler.h"
-#include "ADCSampler.h"
-#include "I2SOutput.h"
+//#include "ADCSampler.h"
+//#include "I2SOutput.h"
 #include "config.h"
 #include "Application.h"
 #include "SPIFFS.h"
 #include "IntentProcessor.h"
-#include "Speaker.h"
+//#include "Speaker.h"
 #include "IndicatorLight.h"
 
 // i2s config for reading from both channels of I2S
