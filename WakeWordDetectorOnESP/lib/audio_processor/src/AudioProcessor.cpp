@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <algorithm>
+#include <Arduino.h>
 #include "AudioProcessor.h"
 #include "HammingWindow.h"
 #include "RingBuffer.h"
@@ -28,6 +29,8 @@ AudioProcessor::AudioProcessor(int audio_length, int window_size, int step_size,
     m_cfg = kiss_fftr_alloc(m_fft_size, false, 0, 0);
     // initialise the hamming window
     m_hamming_window = new HammingWindow(m_window_size);
+    // track the noise floor
+    m_smoothed_noise_floor = 0;
 }
 
 AudioProcessor::~AudioProcessor()
@@ -81,7 +84,7 @@ void AudioProcessor::get_spectrogram_segment(float *output)
     }
 }
 
-void AudioProcessor::get_spectrogram(RingBufferAccessor *reader, float *output_spectrogram)
+bool AudioProcessor::get_spectrogram(RingBufferAccessor *reader, float *output_spectrogram)
 {
     int startIndex = reader->getIndex();
     // get the mean value of the samples
@@ -95,11 +98,30 @@ void AudioProcessor::get_spectrogram(RingBufferAccessor *reader, float *output_s
     // get the absolute max value of the samples taking into account the mean value
     reader->setIndex(startIndex);
     float max = 0;
+    float noise_floor = 0;
+    int samples_over_noise_floor = 0;
     for (int i = 0; i < m_audio_length; i++)
     {
-        max = std::max(max, fabsf(((float)reader->getCurrentSample()) - mean));
+        float value = fabsf(((float)reader->getCurrentSample()) - mean);
+        max = std::max(max, value);
+        noise_floor += value;
+        if (value > 5 * m_smoothed_noise_floor)
+        {
+            samples_over_noise_floor++;
+        }
         reader->moveToNextSample();
     }
+    noise_floor /= m_audio_length;
+    // update the smoothed noise floor
+    if (noise_floor < m_smoothed_noise_floor)
+    {
+        m_smoothed_noise_floor = 0.7 * m_smoothed_noise_floor + noise_floor * 0.3;
+    }
+    else
+    {
+        m_smoothed_noise_floor = 0.99 * m_smoothed_noise_floor + noise_floor * 0.01;
+    }
+
     // extract windows of samples moving forward by step size each time and compute the spectrum of the window
     for (int window_start = startIndex; window_start < startIndex + 16000 - m_window_size; window_start += m_step_size)
     {
@@ -121,4 +143,6 @@ void AudioProcessor::get_spectrogram(RingBufferAccessor *reader, float *output_s
         // move to the next row of the output spectrogram
         output_spectrogram += m_pooled_energy_size;
     }
+    // did we actually get enough audio above the noise floor?
+    return samples_over_noise_floor > m_audio_length / 20;
 }

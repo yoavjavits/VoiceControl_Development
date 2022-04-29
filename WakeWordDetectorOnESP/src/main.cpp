@@ -4,13 +4,10 @@
 #include <esp_task_wdt.h>
 #include "I2SMicSampler.h"
 //#include "ADCSampler.h"
-//#include "I2SOutput.h"
 #include "config.h"
-#include "Application.h"
 #include "SPIFFS.h"
-#include "IntentProcessor.h"
-//#include "Speaker.h"
-#include "IndicatorLight.h"
+#include "CommandDetector.h"
+#include "CommandProcessor.h"
 
 // i2s config for reading from both channels of I2S
 i2s_config_t i2sMemsConfigBothChannels = {
@@ -36,7 +33,7 @@ i2s_pin_config_t i2s_mic_pins = {
 // This task does all the heavy lifting for our application
 void applicationTask(void *param)
 {
-  Application *application = static_cast<Application *>(param);
+  CommandDetector *commandDetector = static_cast<CommandDetector *>(param);
 
   const TickType_t xMaxBlockTime = pdMS_TO_TICKS(100);
   while (true)
@@ -45,7 +42,7 @@ void applicationTask(void *param)
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
     if (ulNotificationValue > 0)
     {
-      application->run();
+      commandDetector->run();
     }
   }
 }
@@ -55,6 +52,8 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   Serial.println("Starting up");
+  
+  /*
   // start up wifi
   // launch WiFi
   WiFi.mode(WIFI_STA);
@@ -70,33 +69,25 @@ void setup()
 
   // startup SPIFFS for the wav files
   SPIFFS.begin();
+  */
+
   // make sure we don't get killed for our long running tasks
   esp_task_wdt_init(10, false);
-
   I2SSampler *i2s_sampler = new I2SMicSampler(i2s_mic_pins, false);
 
-  // indicator light to show when we are listening
-  IndicatorLight *indicator_light = new IndicatorLight();
-
-/*
-  // and the intent processor
-  IntentProcessor *intent_processor = new IntentProcessor(speaker);
-  intent_processor->addDevice("kitchen", GPIO_NUM_5);
-  intent_processor->addDevice("bedroom", GPIO_NUM_21);
-  intent_processor->addDevice("table", GPIO_NUM_23);
-*/
+  CommandProcessor *command_processor = new CommandProcessor();
 
   // create our application
-  Application *application = new Application(i2s_sampler, intent_processor, speaker, indicator_light);
+  CommandDetector *commandDetector = new CommandDetector(i2s_sampler, command_processor);
 
   // set up the i2s sample writer task
   TaskHandle_t applicationTaskHandle;
-  xTaskCreate(applicationTask, "Application Task", 8192, application, 1, &applicationTaskHandle);
+  xTaskCreatePinnedToCore(applicationTask, "Command Detect", 8192, commandDetector, 1, &applicationTaskHandle, 0);
 
   i2s_sampler->start(I2S_NUM_0, i2sMemsConfigBothChannels, applicationTaskHandle);
 }
 
 void loop()
 {
-  vTaskDelay(1000);
+  vTaskDelay(pdMS_TO_TICKS(1000));
 }

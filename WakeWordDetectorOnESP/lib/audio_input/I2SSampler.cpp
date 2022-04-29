@@ -43,6 +43,8 @@ void i2sReaderTask(void *param)
 
 I2SSampler::I2SSampler()
 {
+    m_audio_buffers = (AudioBuffer **)malloc(sizeof(AudioBuffer **) * AUDIO_BUFFER_COUNT);
+
     // allocate the audio buffers
     for (int i = 0; i < AUDIO_BUFFER_COUNT; i++)
     {
@@ -61,7 +63,7 @@ void I2SSampler::start(i2s_port_t i2s_port, i2s_config_t &i2s_config, TaskHandle
     // set up the I2S configuration from the subclass
     configureI2S();
     // start a task to read samples
-    xTaskCreate(i2sReaderTask, "i2s Reader Task", 4096, this, 1, &m_reader_task_handle);
+    xTaskCreatePinnedToCore(i2sReaderTask, "i2s Reader Task", 4096, this, 1, &m_reader_task_handle, 0);
 }
 
 RingBufferAccessor *I2SSampler::getRingBufferReader()

@@ -7,7 +7,7 @@
 #include "tensorflow/lite/version.h"
 
 // approximate working size of our model
-const int kArenaSize = 25000;
+const int kArenaSize = 50000;
 
 NeuralNetwork::NeuralNetwork()
 {
@@ -39,6 +39,7 @@ NeuralNetwork::NeuralNetwork()
     m_resolver->AddReshape();
     m_resolver->AddQuantize();
     m_resolver->AddDequantize();
+    m_resolver->AddSoftmax();
 
     // Build an interpreter to run the model with.
     m_interpreter = new tflite::MicroInterpreter(
@@ -55,6 +56,7 @@ NeuralNetwork::NeuralNetwork()
     size_t used_bytes = m_interpreter->arena_used_bytes();
     TF_LITE_REPORT_ERROR(m_error_reporter, "Used bytes %d\n", used_bytes);
 
+    TF_LITE_REPORT_ERROR(m_error_reporter, "Output Size %d\n", m_interpreter->outputs_size());
     // Obtain pointers to the model's input and output tensors.
     input = m_interpreter->input(0);
     output = m_interpreter->output(0);
@@ -73,8 +75,27 @@ float *NeuralNetwork::getInputBuffer()
     return input->data.f;
 }
 
-float NeuralNetwork::predict()
+float *NeuralNetwork::getOutputBuffer()
+{
+    return output->data.f;
+}
+
+NNResult NeuralNetwork::predict()
 {
     m_interpreter->Invoke();
-    return output->data.f[0];
+    // work out the "best output"
+    float best_score = 0;
+    int best_index = -1;
+    for (int i = 0; i < 5; i++)
+    {
+        float score = output->data.f[i];
+        if (score > best_score)
+        {
+            best_score = score;
+            best_index = i;
+        }
+    }
+    return {
+        .score = best_score,
+        .index = best_index};
 }
