@@ -11,6 +11,7 @@
 #define POOLING_SIZE 6
 #define AUDIO_LENGTH 16000
 #define DETECTION_THRESHOLD -3
+#define WAIT_PERIOD 1000
 
 CommandDetector::CommandDetector(I2SSampler *sample_provider, CommandProcessor *command_procesor)
 {
@@ -95,7 +96,7 @@ void CommandDetector::run()
     }
     long end = millis();
     // sanity check best score and check the cool down period
-    if (best_score > DETECTION_THRESHOLD && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > 1000)
+    if (best_score > DETECTION_THRESHOLD && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > WAIT_PERIOD)
     {
         m_last_detection = start;
         m_command_processor->queueCommand(best_index, best_score);
