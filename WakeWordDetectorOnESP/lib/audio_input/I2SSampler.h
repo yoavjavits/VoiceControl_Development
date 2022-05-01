@@ -1,7 +1,7 @@
 #ifndef __sampler_base_h__
 #define __sampler_base_h__
-#include <FreeRTOS/FreeRTOS.h>
-#include <FreeRTOS/task.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 #include <driver/i2s.h>
 #include <algorithm>
 
@@ -16,7 +16,7 @@ class I2SSampler
 {
 private:
     // audio buffers
-    AudioBuffer **m_audio_buffers;
+    AudioBuffer *m_audio_buffers[AUDIO_BUFFER_COUNT];
     RingBufferAccessor *m_write_ring_buffer_accessor;
     // current audio buffer
     int m_current_audio_buffer;

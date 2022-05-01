@@ -20,13 +20,11 @@ void I2SMicSampler::configureI2S()
     i2s_set_pin(getI2SPort(), &m_i2sPins);
 }
 
-void I2SMicSampler::processI2SData(uint8_t *i2sData, size_t bytes_read)
+void I2SMicSampler::processI2SData(uint8_t *i2sData, size_t bytesRead)
 {
     int32_t *samples = (int32_t *)i2sData;
-    for (int i = 0; i < bytes_read / 4; i++)
+    for (int i = 0; i < bytesRead / 4; i++)
     {
-        // addSample(samples[i] >> 11);
-        float normalised = samples[i] / 2147483648.0f;
-        addSample(32768 * normalised);
+        addSample(samples[i] >> 11);
     }
 }

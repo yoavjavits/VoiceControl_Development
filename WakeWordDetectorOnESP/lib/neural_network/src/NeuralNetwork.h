@@ -14,12 +14,6 @@ namespace tflite
 
 struct TfLiteTensor;
 
-typedef struct
-{
-    float score;
-    int index;
-} NNResult;
-
 class NeuralNetwork
 {
 private:
@@ -35,8 +29,7 @@ public:
     NeuralNetwork();
     ~NeuralNetwork();
     float *getInputBuffer();
-    float *getOutputBuffer();
-    NNResult predict();
+    float predict();
 };
 
 #endif

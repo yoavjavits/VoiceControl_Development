@@ -24,7 +24,6 @@ private:
     float *m_energy;
     kiss_fft_cpx *m_fft_output;
     kiss_fftr_cfg m_cfg;
-    float m_smoothed_noise_floor;
 
     HammingWindow *m_hamming_window;
 
@@ -33,7 +32,7 @@ private:
 public:
     AudioProcessor(int audio_length, int window_size, int step_size, int pooling_size);
     ~AudioProcessor();
-    bool get_spectrogram(RingBufferAccessor *reader, float *output_spectrogram);
+    void get_spectrogram(RingBufferAccessor *reader, float *output_spectrogram);
 };
 
 #endif

@@ -52,24 +52,6 @@ void setup()
   Serial.begin(9600);
   delay(1000);
   Serial.println("Starting up");
-  
-  /*
-  // start up wifi
-  // launch WiFi
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PSWD);
-  if (WiFi.waitForConnectResult() != WL_CONNECTED)
-  {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(5000);
-    ESP.restart();
-  }
-  Serial.printf("Total heap: %d\n", ESP.getHeapSize());
-  Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
-
-  // startup SPIFFS for the wav files
-  SPIFFS.begin();
-  */
 
   // make sure we don't get killed for our long running tasks
   esp_task_wdt_init(10, false);
