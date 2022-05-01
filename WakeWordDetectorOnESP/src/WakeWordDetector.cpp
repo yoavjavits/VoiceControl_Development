@@ -67,9 +67,10 @@ void DetectWakeWord::run()
         m_number_of_detections = 0;
         Serial.printf("P(%.2f): Detected wake word 'Go'...\n", output);
 
-        digitalWrite(GPIO_NUM_2, HIGH);   // turn the LED on (HIGH is the voltage level)
-        delay(200);                       // wait for a second
-        digitalWrite(GPIO_NUM_2, LOW);    // turn the LED off by making the voltage LOW
+        digitalWrite(GPIO_NUM_2, HIGH);
+        delay(100);
+        //TODO: change this to another way because it makes the process slower!!!
+        digitalWrite(GPIO_NUM_2, LOW);
         //TODO: do what we want do to do.
         
     }

@@ -56,8 +56,10 @@ void setup()
   Serial.begin(9600);
   delay(1000);
   Serial.println("Starting up");
+
+  pinMode(GPIO_NUM_2, OUTPUT);
   
-    // make sure we don't get killed for our long running tasks
+  // make sure we don't get killed for our long running tasks
   esp_task_wdt_init(10, false);
   I2SSampler *i2s_sampler = new I2SMicSampler(i2s_mic_pins, false);
 
