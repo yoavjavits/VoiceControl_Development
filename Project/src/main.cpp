@@ -49,7 +49,7 @@ void applicationTask(void *param)
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000);
   Serial.println("Starting up");
   
@@ -66,8 +66,8 @@ void setup()
   }
   */
 
-  Serial.printf("Total heap: %d\n", ESP.getHeapSize());
-  Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
+  //Serial.printf("Total heap: %d\n", ESP.getHeapSize());
+  //Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
 
   
   // Direct i2s input from INMP441 or the SPH0645

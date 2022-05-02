@@ -29,10 +29,12 @@ RecogniseCommandState::RecogniseCommandState(I2SSampler *sample_provider, Indica
 
     m_last_detection = 0;
     // m_command_processor = command_procesor;
-
+}
+void RecogniseCommandState::enterState()
+{
     // Create our neural network
-    m_nn = new NeuralNetwork();
-    Serial.println("Created Neural Network");
+    m_nn = new NeuralNetworkCommand();
+    Serial.println("Created Neural Network Command");
     // create our audio processor
     m_audio_processor = new AudioProcessorCommand(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     // clear down the window
@@ -46,22 +48,21 @@ RecogniseCommandState::RecogniseCommandState(I2SSampler *sample_provider, Indica
     m_scores_index = 0;
 
     Serial.println("Created audio processor");
-}
-void RecogniseCommandState::enterState()
-{
+
     // indicate that we are now recording audio
     m_indicator_light->setState(ON);
 
-    uint32_t free_ram = esp_get_free_heap_size();
-    Serial.printf("Free ram before connection %d\n", free_ram);
+    //uint32_t free_ram = esp_get_free_heap_size();
+    //Serial.printf("Free ram before connection %d\n", free_ram);
 
     Serial.println("Ready for action");
 
-    free_ram = esp_get_free_heap_size();
-    Serial.printf("Free ram after connection %d\n", free_ram);
+    //free_ram = esp_get_free_heap_size();
+    //Serial.printf("Free ram after connection %d\n", free_ram);
 }
 bool RecogniseCommandState::run()
 {
+    Serial.println("run command");
     // time how long this takes for stats
     long start = millis();
     // get access to the samples that have been read in
@@ -69,22 +70,22 @@ bool RecogniseCommandState::run()
     // rewind by 1 second
     reader->rewind(16000);
     // get hold of the input buffer for the neural network so we can feed it data
-    float *input_buffer = m_nn->getInputBuffer();
+    float *input_buffer = m_nn->getInputBufferCommand();
     // process the samples to get the spectrogram
     bool is_valid = m_audio_processor->get_spectrogramCommand(reader, input_buffer);
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram
-    m_nn->predict();
+    m_nn->predictCommand();
     // keep track of the previous 5 scores - about 0.5 seconds given current processing speed
     for (int i = 0; i < NUMBER_COMMANDS; i++)
     {
-        float prediction = std::max(m_nn->getOutputBuffer()[i], 1e-6f);
+        float prediction = std::max(m_nn->getOutputBufferCommand()[i], 1e-6f);
         m_scores[m_scores_index][i] = log(is_valid ? prediction : 1e-6);
     }
     m_scores_index = (m_scores_index + 1) % COMMAND_WINDOW;
     // get the best score
-    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0, 0};
+    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0};
     for (int i = 0; i < COMMAND_WINDOW; i++)
     {
         for (int j = 0; j < NUMBER_COMMANDS; j++)
@@ -109,6 +110,7 @@ bool RecogniseCommandState::run()
     if (best_score > DETECTION_THRESHOLD && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > WAIT_PERIOD)
     {
         m_last_detection = start;
+        Serial.println("detected command");
         
         //m_command_processor->queueCommand(best_index, best_score);
         return true;
@@ -145,7 +147,10 @@ bool RecogniseCommandState::run()
 
 void RecogniseCommandState::exitState()
 {
-    // clean up the speech recognizer client as it takes up a lot of RAM
-    uint32_t free_ram = esp_get_free_heap_size();
-    Serial.printf("Free ram after request %d\n", free_ram);
+    delete m_nn;
+    m_nn = NULL;
+    delete m_audio_processor;
+    m_audio_processor = NULL;
+    //uint32_t free_ram = esp_get_free_heap_size();
+    //Serial.printf("Free ram after DetectCommand cleanup %d\n", free_ram);
 }

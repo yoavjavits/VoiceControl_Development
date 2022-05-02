@@ -9,26 +9,21 @@ class HTTPClient;
 class IndicatorLight;
 class IntentProcessor;
 
-class NeuralNetwork;
+class NeuralNetworkCommand;
 class AudioProcessorCommand;
 
-
-#define NUMBER_COMMANDS 6
+#define NUMBER_COMMANDS 5
 #define COMMAND_WINDOW 3
 
 class RecogniseCommandState : public State
 {
 private:
     I2SSampler *m_sample_provider;
-    NeuralNetwork *m_nn;
+    NeuralNetworkCommand *m_nn;
     AudioProcessorCommand *m_audio_processor;
 
     IndicatorLight *m_indicator_light;
     IntentProcessor *m_intent_processor;
-
-    NeuralNetwork *m_nn;
-    AudioProcessorCommand *m_audio_processor;
-
 
     int m_number_of_runs;
     float m_scores[COMMAND_WINDOW][NUMBER_COMMANDS];

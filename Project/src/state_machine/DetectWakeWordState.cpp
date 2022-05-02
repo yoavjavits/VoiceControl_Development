@@ -19,8 +19,8 @@ DetectWakeWordState::DetectWakeWordState(I2SSampler *sample_provider)
 void DetectWakeWordState::enterState()
 {
     // Create our neural network
-    m_nn = new NeuralNetwork();
-    Serial.println("Created Neural Network");
+    m_nn = new NeuralNetworkWakeWord();
+    Serial.println("Created Neural Network WakeWord");
     // create our audio processor
     m_audio_processor = new AudioProcessorWakeWord(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     Serial.println("Created audio processor");
@@ -34,13 +34,13 @@ bool DetectWakeWordState::run()
     // rewind by 1 second
     reader->rewind(16000);
     // get hold of the input buffer for the neural network so we can feed it data
-    float *input_buffer = m_nn->getInputBuffer();
+    float *input_buffer = m_nn->getInputBufferWakeWord();
     // process the samples to get the spectrogram
     m_audio_processor->get_spectrogramWakeWord(reader, input_buffer);
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram
-    float output = m_nn->predict();
+    float output = m_nn->predictWakeWord();
     long end = millis();
     
     // use quite a high threshold to prevent false positives

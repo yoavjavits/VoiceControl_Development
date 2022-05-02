@@ -4,14 +4,14 @@
 #include "States.h"
 
 class I2SSampler;
-class NeuralNetwork;
+class NeuralNetworkWakeWord;
 class AudioProcessorWakeWord;
 
 class DetectWakeWordState : public State
 {
 private:
     I2SSampler *m_sample_provider;
-    NeuralNetwork *m_nn;
+    NeuralNetworkWakeWord *m_nn;
     AudioProcessorWakeWord *m_audio_processor;
 
     unsigned long m_last_detection;

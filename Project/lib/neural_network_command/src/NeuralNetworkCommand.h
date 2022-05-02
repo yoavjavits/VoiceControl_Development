@@ -20,7 +20,7 @@ typedef struct
     int index;
 } NNResult;
 
-class NeuralNetwork
+class NeuralNetworkCommand
 {
 private:
     tflite::MicroMutableOpResolver<10> *m_resolver;
@@ -32,11 +32,11 @@ private:
     uint8_t *m_tensor_arena;
 
 public:
-    NeuralNetwork();
-    ~NeuralNetwork();
-    float *getInputBuffer();
-    float *getOutputBuffer();
-    NNResult predict();
+    NeuralNetworkCommand();
+    ~NeuralNetworkCommand();
+    float *getInputBufferCommand();
+    float *getOutputBufferCommand();
+    NNResult predictCommand();
 };
 
 #endif

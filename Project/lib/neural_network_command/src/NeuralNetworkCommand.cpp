@@ -9,7 +9,7 @@
 // approximate working size of our model
 const int kArenaSize = 50000;
 
-NeuralNetwork::NeuralNetwork()
+NeuralNetworkCommand::NeuralNetworkCommand()
 {
     m_error_reporter = new tflite::MicroErrorReporter();
 
@@ -62,7 +62,7 @@ NeuralNetwork::NeuralNetwork()
     output = m_interpreter->output(0);
 }
 
-NeuralNetwork::~NeuralNetwork()
+NeuralNetworkCommand::~NeuralNetworkCommand()
 {
     delete m_interpreter;
     delete m_resolver;
@@ -70,17 +70,17 @@ NeuralNetwork::~NeuralNetwork()
     delete m_error_reporter;
 }
 
-float *NeuralNetwork::getInputBuffer()
+float *NeuralNetworkCommand::getInputBufferCommand()
 {
     return input->data.f;
 }
 
-float *NeuralNetwork::getOutputBuffer()
+float *NeuralNetworkCommand::getOutputBufferCommand()
 {
     return output->data.f;
 }
 
-NNResult NeuralNetwork::predict()
+NNResult NeuralNetworkCommand::predictCommand()
 {
     m_interpreter->Invoke();
     // work out the "best output"
