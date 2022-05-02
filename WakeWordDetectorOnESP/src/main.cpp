@@ -57,6 +57,9 @@ void setup()
   delay(1000);
   Serial.println("Starting up");
 
+  Serial.printf("Total heap: %d\n", ESP.getHeapSize());
+  Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
+
   pinMode(GPIO_NUM_2, OUTPUT);
   
   // make sure we don't get killed for our long running tasks

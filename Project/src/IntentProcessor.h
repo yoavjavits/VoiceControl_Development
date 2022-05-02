@@ -2,7 +2,7 @@
 #define _intent_processor_h_
 
 #include <map>
-#include "WitAiChunkedUploader.h"
+//#include "WitAiChunkedUploader.h"
 
 class Speaker;
 

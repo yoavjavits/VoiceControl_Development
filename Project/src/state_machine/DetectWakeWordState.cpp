@@ -9,25 +9,21 @@
 #define STEP_SIZE 160
 #define POOLING_SIZE 6
 #define AUDIO_LENGTH 16000
+#define WAIT_PERIOD 1000
 
 DetectWakeWordState::DetectWakeWordState(I2SSampler *sample_provider)
 {
     // save the sample provider for use later
     m_sample_provider = sample_provider;
-    // some stats on performance
-    m_average_detect_time = 0;
-    m_number_of_runs = 0;
 }
 void DetectWakeWordState::enterState()
 {
     // Create our neural network
     m_nn = new NeuralNetwork();
-    Serial.println("Created Neral Net");
+    Serial.println("Created Neural Network");
     // create our audio processor
     m_audio_processor = new AudioProcessor(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     Serial.println("Created audio processor");
-
-    m_number_of_detections = 0;
 }
 bool DetectWakeWordState::run()
 {
@@ -46,26 +42,15 @@ bool DetectWakeWordState::run()
     // get the prediction for the spectrogram
     float output = m_nn->predict();
     long end = millis();
-    // compute the stats
-    m_average_detect_time = (end - start) * 0.1 + m_average_detect_time * 0.9;
-    m_number_of_runs++;
-    // log out some timing info
-    if (m_number_of_runs == 100)
-    {
-        m_number_of_runs = 0;
-        Serial.printf("Average detection time %.fms\n", m_average_detect_time);
-    }
+    
     // use quite a high threshold to prevent false positives
-    if (output > 0.95)
+    if (output > 0.95 && start - m_last_detection > WAIT_PERIOD)
     {
-        m_number_of_detections++;
-        if (m_number_of_detections > 1)
-        {
-            m_number_of_detections = 0;
-            // detected the wake word in several runs, move to the next state
-            Serial.printf("P(%.2f): Here I am, brain the size of a planet...\n", output);
-            return true;
-        }
+        m_last_detection = start;
+
+        // detected the wake word in several runs, move to the next state
+        Serial.printf("P(%.2f): Detected wake word 'Go'...\n", output);
+        return true;
     }
     // nothing detected stay in the current state
     return false;

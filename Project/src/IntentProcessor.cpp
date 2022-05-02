@@ -1,10 +1,8 @@
 #include <Arduino.h>
 #include "IntentProcessor.h"
-#include "Speaker.h"
 
-IntentProcessor::IntentProcessor(Speaker *speaker)
+IntentProcessor::IntentProcessor()
 {
-    m_speaker = speaker;
 }
 
 IntentResult IntentProcessor::turnOnDevice(const Intent &intent)
