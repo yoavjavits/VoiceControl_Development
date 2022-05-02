@@ -4,6 +4,7 @@
 #include "States.h"
 
 class I2SSampler;
+
 class WiFiClient;
 class HTTPClient;
 class IndicatorLight;
@@ -19,6 +20,8 @@ class RecogniseCommandState : public State
 {
 private:
     I2SSampler *m_sample_provider;
+    int m_last_audio_position;
+
     NeuralNetworkCommand *m_nn;
     AudioProcessorCommand *m_audio_processor;
 
