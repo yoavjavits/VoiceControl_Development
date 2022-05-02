@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "I2SSampler.h"
 #include "AudioProcessor.h"
-#include "NeuralNetwork.h"
+#include "NeuralNetworkWakeWord.h"
 #include "RingBuffer.h"
 #include "DetectWakeWordState.h"
 

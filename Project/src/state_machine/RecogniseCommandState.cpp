@@ -10,7 +10,7 @@
 
 #include "I2SSampler.h"
 #include "AudioProcessor.h"
-#include "NeuralNetwork.h"
+#include "NeuralNetworkCommand.h"
 #include "RingBuffer.h"
 
 #define WINDOW_SIZE 320
@@ -110,15 +110,6 @@ bool RecogniseCommandState::run()
         m_last_detection = start;
         m_command_processor->queueCommand(best_index, best_score);
     }
-    // compute the stats
-    m_average_detect_time = (end - start) * 0.1 + m_average_detect_time * 0.9;
-    m_number_of_runs++;
-    // log out some timing info
-    if (m_number_of_runs == 100)
-    {
-        m_number_of_runs = 0;
-        Serial.printf("Average detection time %.fms\n", m_average_detect_time);
-    }
 
     /*
     // indicate that we are now trying to understand the command
@@ -152,8 +143,6 @@ bool RecogniseCommandState::run()
 void RecogniseCommandState::exitState()
 {
     // clean up the speech recognizer client as it takes up a lot of RAM
-    delete m_speech_recogniser;
-    m_speech_recogniser = NULL;
     uint32_t free_ram = esp_get_free_heap_size();
     Serial.printf("Free ram after request %d\n", free_ram);
 }
