@@ -16,8 +16,6 @@ DetectWakeWord::DetectWakeWord(I2SSampler *sample_provider)
     // save the sample provider for use later
     m_sample_provider = sample_provider;
     // some stats on performance
-    m_average_detect_time = 0;
-    m_number_of_runs = 0;
     m_last_detection = 0;
 
      // Create our neural network
@@ -26,8 +24,6 @@ DetectWakeWord::DetectWakeWord(I2SSampler *sample_provider)
     // create our audio processor
     m_audio_processor = new AudioProcessor(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     Serial.println("Created audio processor");
-
-    m_number_of_detections = 0;
 }
 
 void DetectWakeWord::run()
@@ -49,7 +45,6 @@ void DetectWakeWord::run()
     long end = millis();
     // compute the stats
     m_average_detect_time = (end - start) * 0.1 + m_average_detect_time * 0.9;
-    m_number_of_runs++;
 
     // log out some timing info
     /*if (m_number_of_runs == 100)
@@ -62,9 +57,7 @@ void DetectWakeWord::run()
     if (output > 0.95 && start - m_last_detection > WAIT_PERIOD)
     {
         m_last_detection = start;
-        m_number_of_detections++;
-
-        m_number_of_detections = 0;
+    
         Serial.printf("P(%.2f): Detected wake word 'Go'...\n", output);
 
         digitalWrite(GPIO_NUM_2, HIGH);
