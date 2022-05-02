@@ -76,6 +76,24 @@ bool RecogniseCommandState::run()
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram
+    
+    NNResult output = m_nn->predictCommand();
+    long end = millis();
+    
+    // use quite a high threshold to prevent false positives
+    if (output.score > 0.95 && start - m_last_detection > WAIT_PERIOD)
+    {
+        int index = output.index;
+        m_last_detection = start;
+
+        // detected the wake word in several runs, move to the next state
+        Serial.printf("P(%.2f): Detected wake word '(%d)'...\n", output.score, output.index);
+        return true;
+    }
+    // nothing detected stay in the current state
+    return false;
+    
+    /*
     m_nn->predictCommand();
     // keep track of the previous 5 scores - about 0.5 seconds given current processing speed
     for (int i = 0; i < NUMBER_COMMANDS; i++)
@@ -114,7 +132,7 @@ bool RecogniseCommandState::run()
         
         //m_command_processor->queueCommand(best_index, best_score);
         return true;
-    }
+    }*/
 
     /*
     // indicate that we are now trying to understand the command
