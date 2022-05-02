@@ -69,6 +69,7 @@ void DetectWakeWord::run()
     }
 }
 
+
 /*
 if (output > 0.95 && start - m_last_detection > WAIT_PERIOD)
     {
