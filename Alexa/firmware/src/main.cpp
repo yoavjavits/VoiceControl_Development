@@ -89,11 +89,6 @@ void setup()
   Serial.printf("Total heap: %d\n", ESP.getHeapSize());
   Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
 
-  // startup SPIFFS for the wav files
-  SPIFFS.begin();
-  // make sure we don't get killed for our long running tasks
-  esp_task_wdt_init(10, false);
-
   // start up the I2S input (from either an I2S microphone or Analogue microphone via the ADC)
 #ifdef USE_I2S_MIC_INPUT
   // Direct i2s input from INMP441 or the SPH0645

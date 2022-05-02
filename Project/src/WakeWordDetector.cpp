@@ -3,33 +3,30 @@
 #include "AudioProcessor.h"
 #include "NeuralNetwork.h"
 #include "RingBuffer.h"
-#include "DetectWakeWordState.h"
+#include "WakeWordDetector.h"
 
 #define WINDOW_SIZE 320
 #define STEP_SIZE 160
 #define POOLING_SIZE 6
 #define AUDIO_LENGTH 16000
+#define WAIT_PERIOD 1000
 
-DetectWakeWordState::DetectWakeWordState(I2SSampler *sample_provider)
+DetectWakeWord::DetectWakeWord(I2SSampler *sample_provider)
 {
     // save the sample provider for use later
     m_sample_provider = sample_provider;
     // some stats on performance
-    m_average_detect_time = 0;
-    m_number_of_runs = 0;
-}
-void DetectWakeWordState::enterState()
-{
-    // Create our neural network
+    m_last_detection = 0;
+
+     // Create our neural network
     m_nn = new NeuralNetwork();
-    Serial.println("Created Neral Net");
+    Serial.println("Created Neural Network");
     // create our audio processor
     m_audio_processor = new AudioProcessor(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     Serial.println("Created audio processor");
-
-    m_number_of_detections = 0;
 }
-bool DetectWakeWordState::run()
+
+void DetectWakeWord::run()
 {
     // time how long this takes for stats
     long start = millis();
@@ -48,29 +45,51 @@ bool DetectWakeWordState::run()
     long end = millis();
     // compute the stats
     m_average_detect_time = (end - start) * 0.1 + m_average_detect_time * 0.9;
-    m_number_of_runs++;
+
     // log out some timing info
-    if (m_number_of_runs == 100)
+    /*if (m_number_of_runs == 100)
     {
         m_number_of_runs = 0;
         Serial.printf("Average detection time %.fms\n", m_average_detect_time);
-    }
+    }*/
+
     // use quite a high threshold to prevent false positives
-    if (output > 0.95)
+    if (output > 0.95 && start - m_last_detection > WAIT_PERIOD)
     {
+        m_last_detection = start;
+    
+        Serial.printf("P(%.2f): Detected wake word 'Go'...\n", output);
+
+        digitalWrite(GPIO_NUM_2, HIGH);
+        delay(100);
+        //TODO: change this to another way because it makes the process slower!!!
+        digitalWrite(GPIO_NUM_2, LOW);
+        //TODO: do what we want do to do.
+        
+    }
+}
+
+
+/*
+if (output > 0.95 && start - m_last_detection > WAIT_PERIOD)
+    {
+        m_last_detection = start;
         m_number_of_detections++;
+
         if (m_number_of_detections > 1)
         {
             m_number_of_detections = 0;
-            // detected the wake word in several runs, move to the next state
-            Serial.printf("P(%.2f): Here I am, brain the size of a planet...\n", output);
-            return true;
+            Serial.printf("P(%.2f): Detected wake word 'Go'...\n", output);
+
+            digitalWrite(GPIO_NUM_2, HIGH);   // turn the LED on (HIGH is the voltage level)
+            delay(200);                       // wait for a second
+            digitalWrite(GPIO_NUM_2, LOW);    // turn the LED off by making the voltage LOW
+            //TODO: do what we want do to do.
         }
     }
-    // nothing detected stay in the current state
-    return false;
-}
-void DetectWakeWordState::exitState()
+*/
+
+DetectWakeWord::~DetectWakeWord()
 {
     // Create our neural network
     delete m_nn;
