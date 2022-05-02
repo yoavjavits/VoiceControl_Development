@@ -17,6 +17,8 @@
 #define STEP_SIZE 160
 #define POOLING_SIZE 6
 #define AUDIO_LENGTH 16000
+#define DETECTION_THRESHOLD -3
+#define WAIT_PERIOD 1000
 
 RecogniseCommandState::RecogniseCommandState(I2SSampler *sample_provider, IndicatorLight *indicator_light, IntentProcessor *intent_processor)
 {
@@ -24,16 +26,31 @@ RecogniseCommandState::RecogniseCommandState(I2SSampler *sample_provider, Indica
     m_sample_provider = sample_provider;
     m_indicator_light = indicator_light;
     m_intent_processor = intent_processor;
+
+    m_last_detection = 0;
+    // m_command_processor = command_procesor;
+
+    // Create our neural network
+    m_nn = new NeuralNetwork();
+    Serial.println("Created Neural Network");
+    // create our audio processor
+    m_audio_processor = new AudioProcessor(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+    // clear down the window
+    for (int i = 0; i < COMMAND_WINDOW; i++)
+    {
+        for (int j = 0; j < NUMBER_COMMANDS; j++)
+        {
+            m_scores[i][j] = 0;
+        }
+    }
+    m_scores_index = 0;
+
+    Serial.println("Created audio processor");
 }
 void RecogniseCommandState::enterState()
 {
     // indicate that we are now recording audio
     m_indicator_light->setState(ON);
-
-    // stash the start time - we will limit ourselves to 5 seconds of data
-    m_start_time = millis();
-    m_elapsed_time = 0;
-    m_last_audio_position = -1;
 
     uint32_t free_ram = esp_get_free_heap_size();
     Serial.printf("Free ram before connection %d\n", free_ram);
@@ -54,46 +71,80 @@ bool RecogniseCommandState::run()
     // get hold of the input buffer for the neural network so we can feed it data
     float *input_buffer = m_nn->getInputBuffer();
     // process the samples to get the spectrogram
-    m_audio_processor->get_spectrogram(reader, input_buffer);
+    bool is_valid = m_audio_processor->get_spectrogram(reader, input_buffer);
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram
-    float output = m_nn->predict();
-    long end = millis();
-
-
-    
-        // has 3 seconds passed?
-        unsigned long current_time = millis();
-        m_elapsed_time += current_time - m_start_time;
-        m_start_time = current_time;
-        if (m_elapsed_time > 3000)
+    m_nn->predict();
+    // keep track of the previous 5 scores - about 0.5 seconds given current processing speed
+    for (int i = 0; i < NUMBER_COMMANDS; i++)
+    {
+        float prediction = std::max(m_nn->getOutputBuffer()[i], 1e-6f);
+        m_scores[m_scores_index][i] = log(is_valid ? prediction : 1e-6);
+    }
+    m_scores_index = (m_scores_index + 1) % COMMAND_WINDOW;
+    // get the best score
+    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0};
+    for (int i = 0; i < COMMAND_WINDOW; i++)
+    {
+        for (int j = 0; j < NUMBER_COMMANDS; j++)
         {
-            // indicate that we are now trying to understand the command
-            m_indicator_light->setState(PULSING);
-
-            // all done, move to next state
-            Serial.println("3 seconds has elapsed - finishing recognition request");
-            // final new line to finish off the request
-            Intent intent = m_speech_recogniser->getResults();
-            IntentResult intentResult = m_intent_processor->processIntent(intent);
-            switch (intentResult)
-            {
-            case SUCCESS:
-                m_speaker->playOK();
-                break;
-            case FAILED:
-                m_speaker->playCantDo();
-                break;
-            case SILENT_SUCCESS:
-                // nothing to do
-                break;
-            }
-            // indicate that we are done
-            m_indicator_light->setState(OFF);
-            return true;
+            scores[j] += m_scores[i][j];
         }
     }
+    // get the best score
+    float best_score = scores[0];
+    int best_index = 0;
+    for (int i = 1; i < NUMBER_COMMANDS; i++)
+    {
+        if (scores[i] > best_score)
+        {
+            best_index = i;
+            best_score = scores[i];
+        }
+    }
+    long end = millis();
+    // sanity check best score and check the cool down period
+    if (best_score > DETECTION_THRESHOLD && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > WAIT_PERIOD)
+    {
+        m_last_detection = start;
+        m_command_processor->queueCommand(best_index, best_score);
+    }
+    // compute the stats
+    m_average_detect_time = (end - start) * 0.1 + m_average_detect_time * 0.9;
+    m_number_of_runs++;
+    // log out some timing info
+    if (m_number_of_runs == 100)
+    {
+        m_number_of_runs = 0;
+        Serial.printf("Average detection time %.fms\n", m_average_detect_time);
+    }
+
+    /*
+    // indicate that we are now trying to understand the command
+    m_indicator_light->setState(PULSING);
+
+    // all done, move to next state
+    Serial.println("3 seconds has elapsed - finishing recognition request");
+    // final new line to finish off the request
+    Intent intent = m_speech_recogniser->getResults();
+    IntentResult intentResult = m_intent_processor->processIntent(intent);
+    switch (intentResult)
+    {
+    case SUCCESS:
+        m_speaker->playOK();
+        break;
+    case FAILED:
+        m_speaker->playCantDo();
+        break;
+    case SILENT_SUCCESS:
+        // nothing to do
+        break;
+    }
+    // indicate that we are done
+    m_indicator_light->setState(OFF);
+    return true; */
+    
     // still work to do, stay in this state
     return false;
 }
