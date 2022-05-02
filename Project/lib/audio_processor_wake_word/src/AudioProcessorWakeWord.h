@@ -6,11 +6,11 @@
 // #define FIXED_POINT (16)
 #include "./kissfft/tools/kiss_fftr.h"
 
-class HammingWindow;
+class HammingWindowWakeWord;
 
 class RingBufferAccessor;
 
-class AudioProcessor
+class AudioProcessorWakeWord
 {
 private:
     int m_audio_length;
@@ -25,14 +25,14 @@ private:
     kiss_fft_cpx *m_fft_output;
     kiss_fftr_cfg m_cfg;
 
-    HammingWindow *m_hamming_window;
+    HammingWindowWakeWord *m_hamming_window;
 
     void get_spectrogram_segment(float *output_spectrogram_row);
 
 public:
-    AudioProcessor(int audio_length, int window_size, int step_size, int pooling_size);
-    ~AudioProcessor();
-    void get_spectrogram(RingBufferAccessor *reader, float *output_spectrogram);
+    AudioProcessorWakeWord(int audio_length, int window_size, int step_size, int pooling_size);
+    ~AudioProcessorWakeWord();
+    void get_spectrogramWakeWord(RingBufferAccessor *reader, float *output_spectrogram);
 };
 
 #endif

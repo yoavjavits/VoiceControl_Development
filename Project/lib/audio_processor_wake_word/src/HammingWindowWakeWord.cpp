@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <math.h>
-#include "HammingWindow.h"
+#include "HammingWindowWakeWord.h"
 
-HammingWindow::HammingWindow(int window_size)
+HammingWindowWakeWord::HammingWindowWakeWord(int window_size)
 {
     m_window_size = window_size;
     m_coefficients = static_cast<float *>(malloc(sizeof(float) * m_window_size));
@@ -16,12 +16,12 @@ HammingWindow::HammingWindow(int window_size)
     }
 }
 
-HammingWindow::~HammingWindow()
+HammingWindowWakeWord::~HammingWindowWakeWord()
 {
     free(m_coefficients);
 }
 
-void HammingWindow::applyWindow(float *input)
+void HammingWindowWakeWord::applyWindowWakeWord(float *input)
 {
     for (int i = 0; i < m_window_size; i++)
     {
