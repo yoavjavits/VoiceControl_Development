@@ -9,7 +9,7 @@
 // approximate working size of our model
 const int kArenaSize = 25000;
 
-NeuralNetwork::NeuralNetwork()
+NeuralNetworkWakeWord::NeuralNetworkWakeWord()
 {
     m_error_reporter = new tflite::MicroErrorReporter();
 
@@ -60,7 +60,7 @@ NeuralNetwork::NeuralNetwork()
     output = m_interpreter->output(0);
 }
 
-NeuralNetwork::~NeuralNetwork()
+NeuralNetworkWakeWord::~NeuralNetworkWakeWord()
 {
     delete m_interpreter;
     delete m_resolver;
@@ -68,12 +68,12 @@ NeuralNetwork::~NeuralNetwork()
     delete m_error_reporter;
 }
 
-float *NeuralNetwork::getInputBuffer()
+float *NeuralNetworkWakeWord::getInputBufferWakeWord()
 {
     return input->data.f;
 }
 
-float NeuralNetwork::predict()
+float NeuralNetworkWakeWord::predictWakeWord()
 {
     m_interpreter->Invoke();
     return output->data.f[0];

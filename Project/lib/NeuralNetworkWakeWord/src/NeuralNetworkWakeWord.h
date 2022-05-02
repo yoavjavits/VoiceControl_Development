@@ -14,7 +14,7 @@ namespace tflite
 
 struct TfLiteTensor;
 
-class NeuralNetwork
+class NeuralNetworkWakeWord
 {
 private:
     tflite::MicroMutableOpResolver<10> *m_resolver;
@@ -26,10 +26,10 @@ private:
     uint8_t *m_tensor_arena;
 
 public:
-    NeuralNetwork();
-    ~NeuralNetwork();
-    float *getInputBuffer();
-    float predict();
+    NeuralNetworkWakeWord();
+    ~NeuralNetworkWakeWord();
+    float *getInputBufferWakeWord();
+    float predictWakeWord();
 };
 
 #endif
