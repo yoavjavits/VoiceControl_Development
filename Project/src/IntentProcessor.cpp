@@ -5,9 +5,9 @@ IntentProcessor::IntentProcessor()
 {
 }
 
-IntentResult IntentProcessor::turnOnDevice(const Intent &intent)
+IntentResult IntentProcessor::turnOnDevice()
 {
-    if (intent.intent_confidence < 0.8)
+    /*if (intent.intent_confidence < 0.8)
     {
         Serial.printf("Only %.f%% certain on intent\n", 100 * intent.intent_confidence);
         return FAILED;
@@ -52,25 +52,25 @@ IntentResult IntentProcessor::turnOnDevice(const Intent &intent)
         }
         digitalWrite(m_device_to_pin[intent.device_name], is_turn_on);
     }
-    // success!
+    // success!*/
     return SUCCESS;
 }
 
 IntentResult IntentProcessor::tellJoke()
 {
-    m_speaker->playRandomJoke();
+    //m_speaker->playRandomJoke();
     return SILENT_SUCCESS;
 }
 
 IntentResult IntentProcessor::life()
 {
-    m_speaker->playLife();
+    //m_speaker->playLife();
     return SILENT_SUCCESS;
 }
 
-IntentResult IntentProcessor::processIntent(const Intent &intent)
+IntentResult IntentProcessor::processIntent()
 {
-    if (intent.text.empty())
+    /*if (intent.text.empty())
     {
         Serial.println("No text recognised");
         return FAILED;
@@ -95,7 +95,9 @@ IntentResult IntentProcessor::processIntent(const Intent &intent)
         return life();
     }
 
-    return FAILED;
+    return FAILED;*/
+
+    return SUCCESS;
 }
 
 void IntentProcessor::addDevice(const std::string &name, int gpio_pin)

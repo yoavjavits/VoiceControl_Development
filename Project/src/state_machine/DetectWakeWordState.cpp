@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "I2SSampler.h"
-#include "AudioProcessor.h"
+#include "AudioProcessorWakeWord.h"
 #include "NeuralNetworkWakeWord.h"
 #include "RingBuffer.h"
 #include "DetectWakeWordState.h"
@@ -22,7 +22,7 @@ void DetectWakeWordState::enterState()
     m_nn = new NeuralNetwork();
     Serial.println("Created Neural Network");
     // create our audio processor
-    m_audio_processor = new AudioProcessor(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+    m_audio_processor = new AudioProcessorWakeWord(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     Serial.println("Created audio processor");
 }
 bool DetectWakeWordState::run()
@@ -36,7 +36,7 @@ bool DetectWakeWordState::run()
     // get hold of the input buffer for the neural network so we can feed it data
     float *input_buffer = m_nn->getInputBuffer();
     // process the samples to get the spectrogram
-    m_audio_processor->get_spectrogram(reader, input_buffer);
+    m_audio_processor->get_spectrogramWakeWord(reader, input_buffer);
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram

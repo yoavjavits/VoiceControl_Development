@@ -9,7 +9,7 @@
 #include <string.h>
 
 #include "I2SSampler.h"
-#include "AudioProcessor.h"
+#include "AudioProcessorCommand.h"
 #include "NeuralNetworkCommand.h"
 #include "RingBuffer.h"
 
@@ -34,7 +34,7 @@ RecogniseCommandState::RecogniseCommandState(I2SSampler *sample_provider, Indica
     m_nn = new NeuralNetwork();
     Serial.println("Created Neural Network");
     // create our audio processor
-    m_audio_processor = new AudioProcessor(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+    m_audio_processor = new AudioProcessorCommand(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
     // clear down the window
     for (int i = 0; i < COMMAND_WINDOW; i++)
     {
@@ -71,7 +71,7 @@ bool RecogniseCommandState::run()
     // get hold of the input buffer for the neural network so we can feed it data
     float *input_buffer = m_nn->getInputBuffer();
     // process the samples to get the spectrogram
-    bool is_valid = m_audio_processor->get_spectrogram(reader, input_buffer);
+    bool is_valid = m_audio_processor->get_spectrogramCommand(reader, input_buffer);
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram
@@ -84,7 +84,7 @@ bool RecogniseCommandState::run()
     }
     m_scores_index = (m_scores_index + 1) % COMMAND_WINDOW;
     // get the best score
-    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0};
+    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0, 0};
     for (int i = 0; i < COMMAND_WINDOW; i++)
     {
         for (int j = 0; j < NUMBER_COMMANDS; j++)
@@ -103,12 +103,15 @@ bool RecogniseCommandState::run()
             best_score = scores[i];
         }
     }
+
     long end = millis();
     // sanity check best score and check the cool down period
     if (best_score > DETECTION_THRESHOLD && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > WAIT_PERIOD)
     {
         m_last_detection = start;
-        m_command_processor->queueCommand(best_index, best_score);
+        
+        //m_command_processor->queueCommand(best_index, best_score);
+        return true;
     }
 
     /*

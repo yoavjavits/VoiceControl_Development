@@ -5,14 +5,14 @@
 
 class I2SSampler;
 class NeuralNetwork;
-class AudioProcessor;
+class AudioProcessorWakeWord;
 
 class DetectWakeWordState : public State
 {
 private:
     I2SSampler *m_sample_provider;
     NeuralNetwork *m_nn;
-    AudioProcessor *m_audio_processor;
+    AudioProcessorWakeWord *m_audio_processor;
 
     unsigned long m_last_detection;
 

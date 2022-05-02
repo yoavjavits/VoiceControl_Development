@@ -17,16 +17,15 @@ class IntentProcessor
 {
 private:
     std::map<std::string, int> m_device_to_pin;
-    IntentResult turnOnDevice(const Intent &intent);
+    IntentResult turnOnDevice();
     IntentResult tellJoke();
     IntentResult life();
 
-    Speaker *m_speaker;
 
 public:
-    IntentProcessor(Speaker *speaker);
+    IntentProcessor();
     void addDevice(const std::string &name, int gpio_pin);
-    IntentResult processIntent(const Intent &intent);
+    IntentResult processIntent();
 };
 
 #endif
