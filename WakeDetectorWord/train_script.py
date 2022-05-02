@@ -11,6 +11,14 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.data import Dataset
 import matplotlib.pyplot as plt
+import pandas as pd
+
+
+f = open('train.txt', 'a')
+
+
+def write(txt):
+    f.write(f'{txt}\n')
 
 # Load the TensorBoard notebook extension - if you want it inline - this can be a bit flaky...
 # %load_ext tensorboard
@@ -78,7 +86,7 @@ IMG_WIDTH = X_train[0].shape[0]
 IMG_HEIGHT = X_train[0].shape[1]
 
 unique, counts = np.unique(Y_train_cats, return_counts=True)
-dict(zip([words[i] for i in unique], counts))
+write(dict(zip([words[i] for i in unique], counts)))
 
 Y_train = [1 if y == words.index('go') else 0 for y in Y_train_cats]
 Y_validate = [1 if y == words.index('go') else 0 for y in Y_validate_cats]
@@ -131,7 +139,7 @@ model = Sequential([
         name='output'
     )
 ])
-model.summary()
+write(model.summary())
 
 epochs = 30
 
@@ -163,6 +171,11 @@ history = model.fit(
     callbacks=[tensorboard_callback, model_checkpoint_callback]
 )
 
+hist_df = pd.DataFrame(history.history)
+hist_csv_file = 'history_1.csv'
+with open(hist_csv_file, mode='w') as f:
+    hist_df.to_csv(f)
+
 model.save("trained.model")
 
 # # Testing the Model
@@ -192,6 +205,11 @@ history = model2.fit(
     steps_per_epoch=len(complete_train_X) // batch_size,
     epochs=5
 )
+
+hist_df = pd.DataFrame(history.history)
+hist_csv_file = 'history_2.csv'
+with open(hist_csv_file, mode='w') as f:
+    hist_df.to_csv(f)
 
 predictions = model2.predict_on_batch(complete_train_X)
 decision = [1 if p > 0.5 else 0 for p in predictions]
