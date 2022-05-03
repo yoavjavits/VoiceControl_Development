@@ -30,6 +30,7 @@ private:
     int m_scores_index;
 
     bool isWakeWord;
+    bool first_time;
 
 public:
     CommandDetector(I2SSampler *sample_provider, CommandProcessor *command_processor);

@@ -21,7 +21,7 @@ NeuralNetworkWakeWord::NeuralNetworkWakeWord()
     }
     TF_LITE_REPORT_ERROR(m_error_reporter, "Loading model");
 
-    m_model = tflite::GetModel(converted_model_tflite);
+    m_model = tflite::GetModel(converted_model_tfliteW);
     if (m_model->version() != TFLITE_SCHEMA_VERSION)
     {
         TF_LITE_REPORT_ERROR(m_error_reporter, "Model provided is schema version %d not equal to supported version %d.",

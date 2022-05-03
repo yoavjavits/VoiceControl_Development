@@ -2,8 +2,8 @@
 #include "I2SSampler.h"
 #include "AudioProcessorWakeWord.h"
 #include "AudioProcessorCommand.h"
-#include "NeuralNetworkWakeWord.h"
-#include "NeuralNetworkCommand.h"
+#include "../lib/neural_network_command/src/NeuralNetworkCommand.h"
+#include "../lib/neural_network_wake_word/src/NeuralNetworkWakeWord.h"
 #include "RingBuffer.h"
 #include "CommandDetector.h"
 #include "CommandProcessor.h"
@@ -13,7 +13,7 @@
 #define POOLING_SIZE 6
 #define AUDIO_LENGTH 16000
 #define DETECTION_THRESHOLD -3
-#define WAIT_PERIOD 500
+#define WAIT_PERIOD 1000
 
 CommandDetector::CommandDetector(I2SSampler *sample_provider, CommandProcessor *command_procesor)
 {
@@ -21,39 +21,30 @@ CommandDetector::CommandDetector(I2SSampler *sample_provider, CommandProcessor *
 
     // save the sample provider for use later
     m_sample_provider = sample_provider;
-
-    /* Create for WakeWord */
-    m_nn_wake_word = new NeuralNetworkWakeWord();
-    Serial.println("Created Neural Network Wake Word");
-    // create our audio processor
-    m_audio_processor_wake_word = new AudioProcessorWakeWord(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
-    Serial.println("Created audio processor");
     m_last_detection = 0;
+
+    isWakeWord = true;
+    first_time = true;
 
     /* Create for Command */
     // Create our neural network
-    m_nn_command = new NeuralNetworkCommand();
-    Serial.println("Created Neural Network Command");
-    // create our audio processor
-    m_audio_processor_command = new AudioProcessorCommand(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+
     // clear down the window
-    for (int i = 0; i < COMMAND_WINDOW; i++)
-    {
-        for (int j = 0; j < NUMBER_COMMANDS; j++)
-        {
-            m_scores[i][j] = 0;
-        }
-    }
-    m_scores_index = 0;
+    /* for (int i = 0; i < COMMAND_WINDOW; i++)
+     {
+         for (int j = 0; j < NUMBER_COMMANDS; j++)
+         {
+             m_scores[i][j] = 0;
+         }
+     }
+     m_scores_index = 0;*/
 
-    Serial.println("Created audio processor coomand");
-
-    isWakeWord = true;
+    Serial.println("Constructor");
 }
 
 CommandDetector::~CommandDetector()
 {
-    delete m_nn_wake_word;
+    /*delete m_nn_wake_word;
     m_nn_wake_word = NULL;
     delete m_audio_processor_wake_word;
     m_audio_processor_wake_word = NULL;
@@ -62,13 +53,23 @@ CommandDetector::~CommandDetector()
     delete m_audio_processor_command;
     m_audio_processor_command = NULL;
     uint32_t free_ram = esp_get_free_heap_size();
-    Serial.printf("Free ram after DetectWakeWord cleanup %d\n", free_ram);
+    Serial.printf("Free ram after DetectWakeWord cleanup %d\n", free_ram);*/
 }
 
 void CommandDetector::run()
 {
     if (isWakeWord)
     {
+        if (first_time)
+        {
+            /* Create for WakeWord */
+            m_nn_wake_word = new NeuralNetworkWakeWord();
+            Serial.println("Created Neural Network Wake Word");
+            // create our audio processor
+            m_audio_processor_wake_word = new AudioProcessorWakeWord(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+            first_time = false;
+        }
+
         // time how long this takes for stats
         long start = millis();
         // get access to the samples that have been read in
@@ -95,15 +96,30 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
 
             isWakeWord = false;
+            first_time = true;
             delay(750); // move to the next sector, so give it some time
 
             digitalWrite(GPIO_NUM_2, LOW);
+
+            delete m_nn_wake_word;
+            m_nn_wake_word = NULL;
+            delete m_audio_processor_wake_word;
+            m_audio_processor_wake_word = NULL;
+            Serial.println("destroyed Neural Network Wake Word");
         }
-        // nothing detected stay in the current state
     }
 
     else
     {
+        if (first_time)
+        {
+            m_nn_command = new NeuralNetworkCommand();
+            Serial.println("Created Neural Network Command");
+            // create our audio processor
+            m_audio_processor_command = new AudioProcessorCommand(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+            first_time = false;
+        }
+
         // time how long this takes for stats
         long start = millis();
         // get access to the samples that have been read in
@@ -130,10 +146,16 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
 
             isWakeWord = true;
+            first_time = true;
             delay(750); // move to the next sector, so give it some time
 
             digitalWrite(GPIO_NUM_2, LOW);
+
+            delete m_nn_command;
+            m_nn_command = NULL;
+            delete m_audio_processor_command;
+            m_audio_processor_command = NULL;
+            Serial.println("destroyed Neural Network Command");
         }
-        // nothing detected stay in the current state
     }
 }
