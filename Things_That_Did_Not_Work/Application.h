@@ -1,0 +1,29 @@
+#ifndef _application_h_
+#define _applicaiton_h_
+
+#include "state_machine/States.h"
+
+class I2SSampler;
+class I2SOutput;
+class State;
+class IndicatorLight;
+class IntentProcessor;
+
+class Application
+{
+private:
+    State *m_detect_wake_word_state;
+    State *m_recognise_command_state;
+    State *m_current_state;
+
+    I2SSampler *m_sample_provider;
+    IntentProcessor *intent_processor_provider;
+    IndicatorLight *indicator_light_provider;
+
+public:
+    Application(I2SSampler *sample_provider, IntentProcessor *intent_processor, IndicatorLight *indicator_light);
+    ~Application();
+    void run();
+};
+
+#endif
