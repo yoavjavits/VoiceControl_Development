@@ -1,10 +1,7 @@
 
-WakeDetectorWord/validation_spectrogram.npz
+Software/LearnNetworks_Python/Go_Network/FirstModel/validation_spectrogram.npz
 
-WakeDetectorWord/training_spectrogram.npz
+Software/LearnNetworks_Python/Go_Network/FirstModel/training_spectrogram.npz
 
-WakeDetectorWord/test_spectrogram.zip
 
-WakeDetectorWord/test_spectrogram.npz
-
-WakeDetectorWord/_go_sounds/
+Software/LearnNetworks_Python/Go_Network/FirstModel/test_spectrogram.npz
