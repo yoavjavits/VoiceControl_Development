@@ -95,7 +95,7 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
 
             isWakeWord = false;
-            delay(200); // move to the next sector, so give it some time
+            delay(750); // move to the next sector, so give it some time
 
             digitalWrite(GPIO_NUM_2, LOW);
         }
@@ -130,7 +130,7 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
 
             isWakeWord = true;
-            delay(200); // move to the next sector, so give it some time
+            delay(750); // move to the next sector, so give it some time
 
             digitalWrite(GPIO_NUM_2, LOW);
         }
