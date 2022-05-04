@@ -153,7 +153,7 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
             isWakeWord = true;
             first_time = true;
-            delay(750);
+            delay(300);
             digitalWrite(GPIO_NUM_2, LOW);
 
             delete m_nn_command;

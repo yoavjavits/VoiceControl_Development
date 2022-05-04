@@ -6,7 +6,7 @@ class NeuralNetwork;
 class AudioProcessor;
 class CommandProcessor;
 
-#define NUMBER_COMMANDS 5
+#define NUMBER_COMMANDS 6
 #define COMMAND_WINDOW 3
 
 class CommandDetector
