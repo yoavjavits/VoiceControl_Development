@@ -75,7 +75,7 @@ void CommandDetector::run()
     }
     m_scores_index = (m_scores_index + 1) % COMMAND_WINDOW;
     // get the best score
-    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0, 0};
+    float scores[NUMBER_COMMANDS] = {0, 0, 0, 0, 0, 0, 0};
     for (int i = 0; i < COMMAND_WINDOW; i++)
     {
         for (int j = 0; j < NUMBER_COMMANDS; j++)
