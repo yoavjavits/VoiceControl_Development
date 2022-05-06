@@ -1,16 +1,16 @@
-#ifndef AUDIO_PROCESSOR_COMMAND
-#define AUDIO_PROCESSOR_COMMAND
+#ifndef AUDIO_PROCESSOR_COMMAND_FLU
+#define AUDIO_PROCESSOR_COMMAND_FLU
 
 #include <stdlib.h>
 #include <stdint.h>
 // #define FIXED_POINT (16)
 #include "./kissfft/tools/kiss_fftr.h"
 
-class HammingWindowCommand;
+class HammingWindowCommand_FLU;
 
 class RingBufferAccessor;
 
-class AudioProcessorCommand
+class AudioProcessorCommand_FLU
 {
 private:
     int m_audio_length;
@@ -28,12 +28,12 @@ private:
 
     HammingWindowCommand *m_hamming_window;
 
-    void get_spectrogram_segment(float *output_spectrogram_row);
+    void get_spectrogram_segment_FLU(float *output_spectrogram_row);
 
 public:
-    AudioProcessorCommand(int audio_length, int window_size, int step_size, int pooling_size);
-    ~AudioProcessorCommand();
-    bool get_spectrogramCommand(RingBufferAccessor *reader, float *output_spectrogram);
+    AudioProcessorCommand_FLU(int audio_length, int window_size, int step_size, int pooling_size);
+    ~AudioProcessorCommand_FLU();
+    bool get_spectrogramCommand_FLU(RingBufferAccessor *reader, float *output_spectrogram);
 };
 
 #endif

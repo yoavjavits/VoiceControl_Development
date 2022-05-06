@@ -6,6 +6,8 @@ const char *words[] = {
     "backward",
     "left",
     "right",
+    "up",
+    "down",
     "_nonsense",
 };
 

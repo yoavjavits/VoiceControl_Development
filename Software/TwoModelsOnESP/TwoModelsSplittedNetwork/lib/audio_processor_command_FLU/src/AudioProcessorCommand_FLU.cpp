@@ -1,13 +1,13 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <Arduino.h>
-#include "AudioProcessorCommand.h"
-#include "HammingWindowCommand.h"
+#include "AudioProcessorCommand_FLU.h"
+#include "HammingWindowCommand_FLU.h"
 #include "RingBuffer.h"
 
 #define EPSILON 1e-6
 
-AudioProcessorCommand::AudioProcessorCommand(int audio_length, int window_size, int step_size, int pooling_size)
+AudioProcessorCommand_FLU::AudioProcessorCommand_FLU(int audio_length, int window_size, int step_size, int pooling_size)
 {
     m_audio_length = audio_length;
     m_window_size = window_size;
@@ -33,7 +33,7 @@ AudioProcessorCommand::AudioProcessorCommand(int audio_length, int window_size, 
     m_smoothed_noise_floor = 0;
 }
 
-AudioProcessorCommand::~AudioProcessorCommand()
+AudioProcessorCommand_FLU::~AudioProcessorCommand_FLU()
 {
     free(m_cfg);
     free(m_fft_input);
@@ -43,10 +43,10 @@ AudioProcessorCommand::~AudioProcessorCommand()
 }
 
 // takes a normalised array of input samples of window_size length
-void AudioProcessorCommand::get_spectrogram_segment(float *output)
+void AudioProcessorCommand_FLU::get_spectrogram_segment_FLU(float *output)
 {
     // apply the hamming window to the samples
-    m_hamming_window->applyWindowCommand(m_fft_input);
+    m_hamming_window->applyWindowCommand_FLU(m_fft_input);
     // do the fft
     kiss_fftr(
         m_cfg,
@@ -84,7 +84,7 @@ void AudioProcessorCommand::get_spectrogram_segment(float *output)
     }
 }
 
-bool AudioProcessorCommand::get_spectrogramCommand(RingBufferAccessor *reader, float *output_spectrogram)
+bool AudioProcessorCommand_FLU::get_spectrogramCommand_FLU(RingBufferAccessor *reader, float *output_spectrogram)
 {
     int startIndex = reader->getIndex();
     // get the mean value of the samples
