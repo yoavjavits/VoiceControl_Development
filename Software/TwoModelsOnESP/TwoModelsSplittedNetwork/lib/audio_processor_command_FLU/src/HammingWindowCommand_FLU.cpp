@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <math.h>
-#include "HammingWindowCommand.h"
+#include "HammingWindowCommand_FLU.h"
 
-HammingWindowCommand::HammingWindowCommand(int window_size)
+HammingWindowCommand_FLU::HammingWindowCommand_FLU(int window_size)
 {
     m_window_size = window_size;
     m_coefficients = static_cast<float *>(malloc(sizeof(float) * m_window_size));
@@ -16,12 +16,12 @@ HammingWindowCommand::HammingWindowCommand(int window_size)
     }
 }
 
-HammingWindowCommand::~HammingWindowCommand()
+HammingWindowCommand_FLU::~HammingWindowCommand_FLU()
 {
     free(m_coefficients);
 }
 
-void HammingWindowCommand::applyWindowCommand(float *input)
+void HammingWindowCommand_FLU::applyWindowCommand_FLU(float *input)
 {
     for (int i = 0; i < m_window_size; i++)
     {

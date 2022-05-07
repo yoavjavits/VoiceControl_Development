@@ -1,13 +1,13 @@
 #include <inttypes.h>
 
-class HammingWindowCommand
+class HammingWindowCommand_FLU
 {
 private:
     float *m_coefficients;
     int m_window_size;
 
 public:
-    HammingWindowCommand(int window_size);
-    ~HammingWindowCommand();
-    void applyWindowCommand(float *input);
+    HammingWindowCommand_FLU(int window_size);
+    ~HammingWindowCommand_FLU();
+    void applyWindowCommand_FLU(float *input);
 };

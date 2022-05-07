@@ -28,7 +28,7 @@ AudioProcessorCommand_FLU::AudioProcessorCommand_FLU(int audio_length, int windo
     // initialise kiss fftr
     m_cfg = kiss_fftr_alloc(m_fft_size, false, 0, 0);
     // initialise the hamming window
-    m_hamming_window = new HammingWindowCommand(m_window_size);
+    m_hamming_window = new HammingWindowCommand_FLU(m_window_size);
     // track the noise floor
     m_smoothed_noise_floor = 0;
 }
@@ -139,7 +139,7 @@ bool AudioProcessorCommand_FLU::get_spectrogramCommand_FLU(RingBufferAccessor *r
             m_fft_input[i] = 0;
         }
         // compute the spectrum for the window of samples and write it to the output
-        get_spectrogram_segment(output_spectrogram);
+        get_spectrogram_segment_FLU(output_spectrogram);
         // move to the next row of the output spectrogram
         output_spectrogram += m_pooled_energy_size;
     }

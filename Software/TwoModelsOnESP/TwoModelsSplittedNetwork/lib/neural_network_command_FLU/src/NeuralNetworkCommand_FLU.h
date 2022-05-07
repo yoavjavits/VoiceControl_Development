@@ -1,5 +1,5 @@
-#ifndef __NeuralNetwork__
-#define __NeuralNetwork__
+#ifndef __NeuralNetwork_FLU__
+#define __NeuralNetwork_FLU__
 
 #include <stdint.h>
 
@@ -18,7 +18,7 @@ typedef struct
 {
     float score;
     int index;
-} NNResult;
+} NNResult_FLU;
 
 class NeuralNetworkCommand_FLU
 {
@@ -36,7 +36,7 @@ public:
     ~NeuralNetworkCommand_FLU();
     float *getInputBufferCommand_FLU();
     float *getOutputBufferCommand_FLU();
-    NNResult predictCommand_FLU();
+    NNResult_FLU predictCommand_FLU();
 };
 
 #endif

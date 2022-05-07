@@ -6,12 +6,15 @@ class I2SSampler;
 class NeuralNetworkWakeWord;
 class AudioProcessorWakeWord;
 
-class NeuralNetworkCommand;
-class AudioProcessorCommand;
+class NeuralNetworkCommand_FLU;
+class AudioProcessorCommand_FLU;
+
+class NeuralNetworkCommand_BRU;
+class AudioProcessorCommand_BRU;
 
 class CommandProcessor;
 
-#define NUMBER_COMMANDS 7
+#define NUMBER_COMMANDS 4
 #define COMMAND_WINDOW 3
 
 class CommandDetector
@@ -24,10 +27,15 @@ private:
     AudioProcessorWakeWord *m_audio_processor_wake_word;
     unsigned long m_last_detection;
 
-    NeuralNetworkCommand *m_nn_command;
-    AudioProcessorCommand *m_audio_processor_command;
-    float m_scores[COMMAND_WINDOW][NUMBER_COMMANDS];
-    int m_scores_index;
+    NeuralNetworkCommand_FLU *m_nn_command_FLU;
+    AudioProcessorCommand_FLU *m_audio_processor_command_FLU;
+    float m_scores_FLU[COMMAND_WINDOW][NUMBER_COMMANDS];
+    int m_scores_index_FLU;
+
+    NeuralNetworkCommand_BRU *m_nn_command_BRU;
+    AudioProcessorCommand_BRU *m_audio_processor_command_BRU;
+    float m_scores_BRU[COMMAND_WINDOW][NUMBER_COMMANDS];
+    int m_scores_index_BRU;
 
     bool isWakeWord;
     bool first_time;

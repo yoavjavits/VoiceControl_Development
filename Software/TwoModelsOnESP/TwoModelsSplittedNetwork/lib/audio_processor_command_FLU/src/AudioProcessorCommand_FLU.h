@@ -26,7 +26,7 @@ private:
     kiss_fftr_cfg m_cfg;
     float m_smoothed_noise_floor;
 
-    HammingWindowCommand *m_hamming_window;
+    HammingWindowCommand_FLU *m_hamming_window;
 
     void get_spectrogram_segment_FLU(float *output_spectrogram_row);
 
