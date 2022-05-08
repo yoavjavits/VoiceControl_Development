@@ -169,11 +169,11 @@ void CommandDetector::run()
                 break;
 
             case 4:
-                Serial.printf("P(%.2f): Detect the word %s\n", best_score, "up");
+                Serial.printf("P(%.2f): Detect the word %s\n", best_score, "one");
                 break;
 
             case 5:
-                Serial.printf("P(%.2f): Detect the word %s\n", best_score, "down");
+                Serial.printf("P(%.2f): Detect the word %s\n", best_score, "zero");
                 break;
 
             default:
