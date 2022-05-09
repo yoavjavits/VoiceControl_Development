@@ -66,7 +66,9 @@ void CommandDetector::run()
     // finished with the sample reader
     delete reader;
     // get the prediction for the spectrogram
-    m_nn->predict();
+    NNResult result = m_nn->predict();
+
+    /*
     // keep track of the previous 5 scores - about 0.5 seconds given current processing speed
     for (int i = 0; i < NUMBER_COMMANDS; i++)
     {
@@ -94,20 +96,38 @@ void CommandDetector::run()
             best_score = scores[i];
         }
     }
+    */
+
+    float best_score = result.score;
+    int best_index = result.index;
+
     long end = millis();
     // sanity check best score and check the cool down period
-    if (best_score > DETECTION_THRESHOLD && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > WAIT_PERIOD)
+    if (best_score > 0.95 && best_index != NUMBER_COMMANDS - 1 && start - m_last_detection > WAIT_PERIOD)
     {
         m_last_detection = start;
-        m_command_processor->queueCommand(best_index, best_score);
-    }
-    // compute the stats
-    m_average_detect_time = (end - start) * 0.1 + m_average_detect_time * 0.9;
-    m_number_of_runs++;
-    // log out some timing info
-    if (m_number_of_runs == 100)
-    {
-        m_number_of_runs = 0;
-        Serial.printf("Average detection time %.fms\n", m_average_detect_time);
+        switch (best_index)
+        {
+        case 0:
+            Serial.printf("P(%.2f): Detect the word %s\n", best_score, "backward");
+            break;
+
+        case 1:
+            Serial.printf("P(%.2f): Detect the word %s\n", best_score, "right");
+            break;
+
+        case 2:
+            Serial.printf("P(%.2f): Detect the word %s\n", best_score, "down");
+            break;
+
+        default:
+            break;
+        }
+
+        digitalWrite(GPIO_NUM_2, HIGH);
+        delay(750);
+        digitalWrite(GPIO_NUM_2, LOW);
+
+        // m_command_processor->queueCommand(best_index, best_score);
     }
 }
