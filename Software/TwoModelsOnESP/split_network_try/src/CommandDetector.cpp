@@ -129,8 +129,8 @@ void CommandDetector::run()
         delete reader2;
 
         // get the prediction for the spectrogram
-        NNResult result_FLU = m_nn_command_FLU->predictCommand_FLU();
-        NNResult result_BRU = m_nn_command_BRU->predictCommand_BRU();
+        NNResult_FLU result_FLU = m_nn_command_FLU->predictCommand_FLU();
+        NNResult_BRU result_BRU = m_nn_command_BRU->predictCommand_BRU();
 
         ///*** Analysis of FLU ***///
         /*
