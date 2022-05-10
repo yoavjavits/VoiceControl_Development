@@ -203,7 +203,7 @@ void CommandDetector::run()
         long end = millis();
 
         bool check = best_score_FLU > best_score_BRU;
-        float best_score = check ? best_score_FLU : best_index_BRU;
+        float best_score = check ? best_score_FLU : best_score_BRU;
         int best_index = check ? best_index_FLU : best_index_BRU;
 
         // sanity check best score and check the cool down period
@@ -270,7 +270,7 @@ void CommandDetector::run()
 
             Serial.println("destroyed Neural Network Command");
 
-            m_command_processor->queueCommand(best_index, best_score); // to add check boolean
+            //m_command_processor->queueCommand(best_index, best_score); // to add check boolean
         }
     }
 }
