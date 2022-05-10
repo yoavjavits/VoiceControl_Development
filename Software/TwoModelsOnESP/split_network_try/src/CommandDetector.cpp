@@ -115,13 +115,15 @@ void CommandDetector::run()
         long start = millis();
         // get access to the samples that have been read in
         RingBufferAccessor *reader = m_sample_provider->getRingBufferReader();
+        RingBufferAccessor *reader2 = m_sample_provider->getRingBufferReader();
+
         // rewind by 1 second
         reader->rewind(16000);
         // get hold of the input buffer for the neural network so we can feed it data
         float *input_buffer_FLU = m_nn_command_FLU->getInputBufferCommand_FLU();
         float *input_buffer_BRU = m_nn_command_BRU->getInputBufferCommand_BRU();
         // process the samples to get the spectrogram
-        RingBufferAccessor *reader2 = reader;
+        RingBufferAccessor::make_same(reader, reader2);
         bool is_valid_FLU = m_audio_processor_command_FLU->get_spectrogramCommand_FLU(reader, input_buffer_FLU);
         bool is_valid_BRU = m_audio_processor_command_BRU->get_spectrogramCommand_BRU(reader2, input_buffer_BRU);
         // finished with the sample reader

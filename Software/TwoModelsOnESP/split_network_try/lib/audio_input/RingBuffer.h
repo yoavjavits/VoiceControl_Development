@@ -57,7 +57,8 @@ public:
     {
         m_current_buffer->samples[m_buffer_pos] = sample;
     }
-    inline void rewind(int samples) {
+    inline void rewind(int samples)
+    {
         setIndex(getIndex() - samples);
     }
     inline bool moveToNextSample()
@@ -75,6 +76,16 @@ public:
             return true;
         }
         return false;
+    }
+
+    static void make_same(RingBufferAccessor *input, RingBufferAccessor *output)
+    {
+        input->m_buffer_pos = output->m_buffer_pos;
+        input->m_buffer_idx = output->m_buffer_idx;
+        input->m_total_size = output->m_total_size;
+        input->m_audio_buffers = output->m_audio_buffers;
+        input->m_number_audio_buffers = output->m_number_audio_buffers;
+        input->m_current_buffer = output->m_current_buffer;
     }
 };
 
