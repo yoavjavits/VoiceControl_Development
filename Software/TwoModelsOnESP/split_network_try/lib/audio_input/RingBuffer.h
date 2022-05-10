@@ -35,17 +35,6 @@ public:
         m_number_audio_buffers = number_audio_buffers;
         m_current_buffer = audioBuffers[0];
     }
-
-    RingBufferAccessor(const RingBufferAccessor &other)
-    {
-        this->m_buffer_pos = other.m_buffer_pos;
-        this->m_buffer_idx = m_buffer_idx;
-        this->m_total_size = other.m_total_size;
-        this->m_audio_buffers = other.m_audio_buffers;
-        this->m_number_audio_buffers = other.m_number_audio_buffers;
-        this->m_current_buffer = other.m_current_buffer;
-    }
-
     int getIndex()
     {
         return m_buffer_idx * SAMPLE_BUFFER_SIZE + m_buffer_pos;
@@ -68,8 +57,7 @@ public:
     {
         m_current_buffer->samples[m_buffer_pos] = sample;
     }
-    inline void rewind(int samples)
-    {
+    inline void rewind(int samples) {
         setIndex(getIndex() - samples);
     }
     inline bool moveToNextSample()
