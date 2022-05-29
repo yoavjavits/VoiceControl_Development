@@ -49,6 +49,8 @@ void applicationTask(void *param)
 void setup()
 {
   Serial.begin(9600);
+  Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
+
   delay(1000);
   Serial.println("Starting up");
 
@@ -56,10 +58,8 @@ void setup()
   esp_task_wdt_init(10, false);
   I2SSampler *i2s_sampler = new I2SMicSampler(i2s_mic_pins, false);
 
-  CommandProcessor *command_processor = new CommandProcessor();
-
   // create our application
-  CommandDetector *commandDetector = new CommandDetector(i2s_sampler, command_processor);
+  CommandDetector *commandDetector = new CommandDetector(i2s_sampler);
 
   // set up the i2s sample writer task
   TaskHandle_t applicationTaskHandle;

@@ -17,29 +17,14 @@
 #define DETECTION_THRESHOLD -3
 #define WAIT_PERIOD 1500
 
-CommandDetector::CommandDetector(I2SSampler *sample_provider, CommandProcessor *command_procesor)
+CommandDetector::CommandDetector(I2SSampler *sample_provider)
 {
-    m_command_processor = command_procesor;
-
     // save the sample provider for use later
     m_sample_provider = sample_provider;
     m_last_detection = 0;
 
     isWakeWord = true;
     first_time = true;
-
-    for (int i = 0; i < COMMAND_WINDOW; i++)
-    {
-        for (int j = 0; j < NUMBER_COMMANDS; j++)
-        {
-            m_scores_FLU[i][j] = 0;
-            m_scores_BRU[i][j] = 0;
-        }
-    }
-    m_scores_index_FLU = 0;
-    m_scores_index_BRU = 0;
-
-    // Serial.println("Created audio processor coomand");
 }
 
 CommandDetector::~CommandDetector()
@@ -54,7 +39,7 @@ void CommandDetector::run()
         {
             /* Create for WakeWord */
             m_nn_wake_word = new NeuralNetworkWakeWord();
-            Serial.println("Created Neural Network Wake Word");
+            //Serial.println("Created Neural Network Wake Word");
             // create our audio processor
             m_audio_processor_wake_word = new AudioProcessorWakeWord(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
             first_time = false;
@@ -62,16 +47,22 @@ void CommandDetector::run()
 
         // time how long this takes for stats
         long start = millis();
+
         // get access to the samples that have been read in
         RingBufferAccessor *reader = m_sample_provider->getRingBufferReader();
+
         // rewind by 1 second
         reader->rewind(16000);
+
         // get hold of the input buffer for the neural network so we can feed it data
         float *input_buffer = m_nn_wake_word->getInputBufferWakeWord();
+
         // process the samples to get the spectrogram
         m_audio_processor_wake_word->get_spectrogramWakeWord(reader, input_buffer);
+
         // finished with the sample reader
         delete reader;
+
         // get the prediction for the spectrogram
         float output = m_nn_wake_word->predictWakeWord();
         long end = millis();
@@ -87,13 +78,14 @@ void CommandDetector::run()
             isWakeWord = false;
             first_time = true;
             delay(750); // move to the next sector, so give it some time
+            //TODO: add bip sound
             digitalWrite(GPIO_NUM_2, LOW);
 
             delete m_nn_wake_word;
             m_nn_wake_word = NULL;
             delete m_audio_processor_wake_word;
             m_audio_processor_wake_word = NULL;
-            Serial.println("destroyed Neural Network Wake Word");
+            //Serial.println("destroyed Neural Network Wake Word");
         }
     }
 
@@ -104,28 +96,29 @@ void CommandDetector::run()
             m_nn_command_FLU = new NeuralNetworkCommand_FLU();
             m_nn_command_BRU = new NeuralNetworkCommand_BRU();
 
-            Serial.println("Created Neural Network Command");
-            // create our audio processor
-            m_audio_processor_command_FLU = new AudioProcessorCommand_FLU(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
-            m_audio_processor_command_BRU = new AudioProcessorCommand_BRU(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+            //Serial.println("Created Neural Network Command");
             first_time = false;
         }
 
         // time how long this takes for stats
         long start = millis();
+
         // get access to the samples that have been read in
         RingBufferAccessor *reader = m_sample_provider->getRingBufferReader();
         RingBufferAccessor *reader2 = m_sample_provider->getRingBufferReader();
 
         // rewind by 1 second
         reader->rewind(16000);
+
         // get hold of the input buffer for the neural network so we can feed it data
         float *input_buffer_FLU = m_nn_command_FLU->getInputBufferCommand_FLU();
         float *input_buffer_BRU = m_nn_command_BRU->getInputBufferCommand_BRU();
+
         // process the samples to get the spectrogram
         RingBufferAccessor::make_same(reader, reader2);
         bool is_valid_FLU = m_audio_processor_command_FLU->get_spectrogramCommand_FLU(reader, input_buffer_FLU);
         bool is_valid_BRU = m_audio_processor_command_BRU->get_spectrogramCommand_BRU(reader2, input_buffer_BRU);
+        
         // finished with the sample reader
         delete reader;
         delete reader2;
@@ -134,73 +127,13 @@ void CommandDetector::run()
         NNResult_FLU result_FLU = m_nn_command_FLU->predictCommand_FLU();
         NNResult_BRU result_BRU = m_nn_command_BRU->predictCommand_BRU();
 
-        ///*** Analysis of FLU ***///
-        /*
-                // keep track of the previous 5 scores - about 0.5 seconds given current processing speed
-                for (int i = 0; i < NUMBER_COMMANDS; i++)
-                {
-                    float prediction_FLU = std::max(m_nn_command_FLU->getOutputBufferCommand_FLU()[i], 1e-6f);
-                    m_scores_FLU[m_scores_index_FLU][i] = log(is_valid_FLU ? prediction_FLU : 1e-6);
-                }
-                m_scores_index_FLU = (m_scores_index_FLU + 1) % COMMAND_WINDOW;
-                // get the best score
-                float scores_FLU[NUMBER_COMMANDS] = {0, 0, 0, 0};
-                for (int i = 0; i < COMMAND_WINDOW; i++)
-                {
-                    for (int j = 0; j < NUMBER_COMMANDS; j++)
-                    {
-                        scores_FLU[j] += m_scores_FLU[i][j];
-                    }
-                }
-                // get the best score
-                float best_score_FLU = scores_FLU[0];
-                int best_index_FLU = 0;
-                for (int i = 1; i < NUMBER_COMMANDS; i++)
-                {
-                    if (scores_FLU[i] > best_score_FLU)
-                    {
-                        best_index_FLU = i;
-                        best_score_FLU = scores_FLU[i];
-                    }
-                }
-        */
-        ///*** Analysis of BRU ***///
-        /*
-                // keep track of the previous 5 scores - about 0.5 seconds given current processing speed
-                for (int i = 0; i < NUMBER_COMMANDS; i++)
-                {
-                    float prediction_BRU = std::max(m_nn_command_BRU->getOutputBufferCommand_BRU()[i], 1e-6f);
-                    m_scores_BRU[m_scores_index_BRU][i] = log(is_valid_BRU ? prediction_BRU : 1e-6);
-                }
-                m_scores_index_BRU = (m_scores_index_BRU + 1) % COMMAND_WINDOW;
-                // get the best score
-                float scores_BRU[NUMBER_COMMANDS] = {0, 0, 0, 0};
-                for (int i = 0; i < COMMAND_WINDOW; i++)
-                {
-                    for (int j = 0; j < NUMBER_COMMANDS; j++)
-                    {
-                        scores_BRU[j] += m_scores_BRU[i][j];
-                    }
-                }
-                // get the best score
-                float best_score_BRU = scores_BRU[0];
-                int best_index_BRU = 0;
-                for (int i = 1; i < NUMBER_COMMANDS; i++)
-                {
-                    if (scores_BRU[i] > best_score_BRU)
-                    {
-                        best_index_BRU = i;
-                        best_score_BRU = scores_BRU[i];
-                    }
-                }
-        */
-
         float best_score_FLU = result_FLU.score;
         int best_index_FLU = result_FLU.index;
         float best_score_BRU = result_BRU.score;
         int best_index_BRU = result_BRU.index;
 
         long end = millis();
+        char move = 'i';
 
         bool check = best_score_FLU > best_score_BRU;
         float best_score = check ? best_score_FLU : best_score_BRU;
@@ -217,14 +150,17 @@ void CommandDetector::run()
                 {
                 case 0:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "forward");
+                    move='f';
                     break;
 
                 case 1:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "up");
+                    move='u';
                     break;
 
                 case 2:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "left");
+                    move='l';
                     break;
 
                 default:
@@ -237,14 +173,17 @@ void CommandDetector::run()
                 {
                 case 0:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "backward");
+                    move='b';
                     break;
 
                 case 1:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "right");
+                    move='r';
                     break;
 
                 case 2:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "down");
+                    move='d';
                     break;
 
                 default:
@@ -268,9 +207,9 @@ void CommandDetector::run()
             delete m_audio_processor_command_BRU;
             m_audio_processor_command_BRU = NULL;
 
-            Serial.println("destroyed Neural Network Command");
+            //Serial.println("destroyed Neural Network Command");
 
-            //m_command_processor->queueCommand(best_index, best_score); // to add check boolean
+            process_command(move);
         }
     }
 }

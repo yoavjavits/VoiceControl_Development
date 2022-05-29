@@ -1,9 +1,19 @@
 #include <Arduino.h>
+#include "Slider.h"
+#include "Gripper.h"
+#include "Stepper.h"
+#include "Solver.h"
+#include "hardware_parameters.h"
 
-void setup() {
-  // put your setup code here, to run once:
+Solver qbot;
+
+void setup() 
+{
+	qbot.init(baudrate);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop() 
+{
+	while(!qbot.communication_handle.read_command());
+	while(!qbot.execute_comand(qbot.communication_handle.get_cmd(), qbot.communication_handle.get_indicator()));
 }

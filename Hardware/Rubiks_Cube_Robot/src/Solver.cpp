@@ -17,7 +17,9 @@ moving_state_turn_back_{state::turn}
 
 void Solver::init(long baud)
 {
-	communication_handle.init_communication(baudrate);
+	//communication_handle.init_communication(baudrate);
+	Serial.begin(9600);
+  	Serial2.begin(115200);
 	enable_steppers();
 }
 

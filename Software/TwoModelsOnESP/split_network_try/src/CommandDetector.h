@@ -20,7 +20,6 @@ class CommandProcessor;
 class CommandDetector
 {
 private:
-    CommandProcessor *m_command_processor;
     I2SSampler *m_sample_provider;
 
     NeuralNetworkWakeWord *m_nn_wake_word;
@@ -29,19 +28,15 @@ private:
 
     NeuralNetworkCommand_FLU *m_nn_command_FLU;
     AudioProcessorCommand_FLU *m_audio_processor_command_FLU;
-    float m_scores_FLU[COMMAND_WINDOW][NUMBER_COMMANDS];
-    int m_scores_index_FLU;
 
     NeuralNetworkCommand_BRU *m_nn_command_BRU;
     AudioProcessorCommand_BRU *m_audio_processor_command_BRU;
-    float m_scores_BRU[COMMAND_WINDOW][NUMBER_COMMANDS];
-    int m_scores_index_BRU;
 
     bool isWakeWord;
     bool first_time;
 
 public:
-    CommandDetector(I2SSampler *sample_provider, CommandProcessor *command_processor);
+    CommandDetector(I2SSampler *sample_provider);
     ~CommandDetector();
     void run();
 };

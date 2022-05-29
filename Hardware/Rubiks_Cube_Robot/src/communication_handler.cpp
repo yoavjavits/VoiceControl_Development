@@ -8,11 +8,11 @@ bool communication_handler::read_command()
 {
 	static constexpr int timeout = 1000;
 	
-	if(Serial.available() >= 2)		//if 2 bytes are stored in the rx buffer
+	if(Serial2.available() >= 2)		//if 2 bytes are stored in the rx buffer
 	{
-		for(int i=0; Serial.available(); i++)	//rx reading buffer into locla buffer array
+		for(int i=0; Serial2.available(); i++)	//rx reading buffer into locla buffer array
 		{
-			buffer_[i] = Serial.read();
+			buffer_[i] = Serial2.read();
 		}
 		if(validate_cmd(buffer_[0], buffer_[1]))	//validating command received
 		{
@@ -23,7 +23,7 @@ bool communication_handler::read_command()
 		}
 		else //invalid command
 		{
-			Serial.write('NUL');
+			Serial2.write('NUL');
 			return false;
 		}
 			
@@ -50,14 +50,14 @@ int communication_handler::get_indicator()
 
 void communication_handler::init_communication(unsigned long baudrate)
 {
-	Serial.begin(baudrate);
+	Serial2.begin(baudrate);
 }
 
 void communication_handler::flush_buffer()
 {
-  while(Serial.available())
+  while(Serial2.available())
   {
-  	char temp_buffer = Serial.read();
+  	char temp_buffer = Serial2.read();
   }
 }
 
