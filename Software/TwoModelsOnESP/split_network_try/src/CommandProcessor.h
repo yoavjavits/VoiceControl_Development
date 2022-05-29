@@ -3,4 +3,11 @@
 
 void process_command(char move);
 
+void MakeRightMove();
+void MakeForwardMove();
+void MakeBackwardMove();
+void MakeLeftMove();
+void MakeUpMove();
+void MakeDownMove();
+
 #endif

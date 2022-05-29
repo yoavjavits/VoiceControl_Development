@@ -96,7 +96,10 @@ void CommandDetector::run()
             m_nn_command_FLU = new NeuralNetworkCommand_FLU();
             m_nn_command_BRU = new NeuralNetworkCommand_BRU();
 
-            //Serial.println("Created Neural Network Command");
+            m_audio_processor_command_FLU = new AudioProcessorCommand_FLU(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+            m_audio_processor_command_BRU = new AudioProcessorCommand_BRU(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
+
+            Serial.println("Created Neural Network Command");
             first_time = false;
         }
 
@@ -116,6 +119,7 @@ void CommandDetector::run()
 
         // process the samples to get the spectrogram
         RingBufferAccessor::make_same(reader, reader2);
+
         bool is_valid_FLU = m_audio_processor_command_FLU->get_spectrogramCommand_FLU(reader, input_buffer_FLU);
         bool is_valid_BRU = m_audio_processor_command_BRU->get_spectrogramCommand_BRU(reader2, input_buffer_BRU);
         

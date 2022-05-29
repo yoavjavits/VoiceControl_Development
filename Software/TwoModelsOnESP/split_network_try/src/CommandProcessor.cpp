@@ -34,3 +34,39 @@ void process_command(char move)
         break;
     }
 }
+
+void MakeRightMove()
+{
+    Serial2.println("R1");
+    Serial.println("R1");
+}
+
+void MakeForwardMove()
+{
+    Serial2.println("F1");
+    Serial.println("F1");
+}
+
+void MakeBackwardMove()
+{
+    Serial2.println("B1");
+    Serial.println("B1");
+}
+
+void MakeLeftMove()
+{
+    Serial2.println("L1");
+    Serial.println("L1");
+}
+
+void MakeUpMove()
+{
+    Serial2.println("U1");
+    Serial.println("U1");
+}
+
+void MakeDownMove()
+{
+    Serial2.println("D1");
+    Serial.println("D1");
+}
