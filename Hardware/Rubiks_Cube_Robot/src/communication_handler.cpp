@@ -63,10 +63,7 @@ void communication_handler::flush_buffer()
 
 bool communication_handler::validate_cmd(char command, int indicator)
 {
-	if(isAlpha(command) && isDigit(indicator))
-		return true;
-	else
-		return false;
+	return (isAlpha(command) && isDigit(indicator));
 }
 
 int communication_handler::char_to_int(char x)

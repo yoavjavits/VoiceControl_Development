@@ -1,3 +1,6 @@
+#ifndef SOLVER_H
+#define SOLVER_H
+
 #pragma once
 #include <Arduino.h>
 #include "Slider.h"
@@ -34,3 +37,5 @@ private:
 
 	
 };
+
+#endif

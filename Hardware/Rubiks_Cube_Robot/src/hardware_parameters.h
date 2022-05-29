@@ -1,3 +1,6 @@
+#ifndef HARDWARE_PARAMETERS_H
+#define HARDWARE_PARAMETERS_H
+
 #pragma once
 //------------------ general ------------------
 static constexpr int steps_per_rot = 200;
@@ -37,6 +40,4 @@ static constexpr int sliderX_step = 4;
 static constexpr int sliderX_dir = 5;
 static constexpr int sliderX_en = 41;
 
-
-
-
+#endif
