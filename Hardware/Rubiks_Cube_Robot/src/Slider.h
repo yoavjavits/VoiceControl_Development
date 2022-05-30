@@ -1,3 +1,6 @@
+#ifndef SLIDER_H
+#define SLIDER_H
+
 #pragma once
 
 #include <Arduino.h>
@@ -13,3 +16,5 @@ private:
 	int max_angle_;	//defines the angle to move grippers away from cube
 
 };
+
+#endif

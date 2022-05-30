@@ -1,3 +1,6 @@
+#ifndef STEPPER_H
+#define STEPPER_H
+
 #pragma once
 #include "enum.h"
 
@@ -27,3 +30,5 @@ private:
 	int angle_to_steps(int angle);
 
 };
+
+#endif

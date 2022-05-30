@@ -1,6 +1,9 @@
+#ifndef GRIPPER_H
+#define GRIPPER_H
+
 #pragma once
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include "Stepper.h"
 
 
@@ -11,3 +14,5 @@ public:
 	void set_turns(int quarter_turns, dir dir);
 	bool moving;
 };
+
+#endif

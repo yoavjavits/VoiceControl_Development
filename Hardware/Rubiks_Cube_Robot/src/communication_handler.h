@@ -1,5 +1,8 @@
+#ifndef COMMUNICATION_HANDLER_H
+#define COMMUNICATION_HANDLER_H
+
 #pragma once
-#include "Arduino.h"
+#include <Arduino.h>
 #include <ctype.h>	//for isDigit() and isAlpha() functions
 
 
@@ -21,3 +24,5 @@ private:
 	bool validate_cmd(char command, int indicator);
 	int char_to_int(char x);
 };
+
+#endif
