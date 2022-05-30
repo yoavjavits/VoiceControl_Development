@@ -39,8 +39,8 @@ void CommandDetector::run()
         {
             /* Create for WakeWord */
             m_nn_wake_word = new NeuralNetworkWakeWord();
-            //Serial.println("Created Neural Network Wake Word");
-            // create our audio processor
+            // Serial.println("Created Neural Network Wake Word");
+            //  create our audio processor
             m_audio_processor_wake_word = new AudioProcessorWakeWord(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
             first_time = false;
         }
@@ -77,15 +77,15 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
             isWakeWord = false;
             first_time = true;
-            delay(750); // move to the next sector, so give it some time
-            //TODO: add bip sound
+            delay(1000); // move to the next sector, so give it some time
+            // TODO: add bip sound
             digitalWrite(GPIO_NUM_2, LOW);
 
             delete m_nn_wake_word;
             m_nn_wake_word = NULL;
             delete m_audio_processor_wake_word;
             m_audio_processor_wake_word = NULL;
-            //Serial.println("destroyed Neural Network Wake Word");
+            // Serial.println("destroyed Neural Network Wake Word");
         }
     }
 
@@ -122,7 +122,7 @@ void CommandDetector::run()
 
         bool is_valid_FLU = m_audio_processor_command_FLU->get_spectrogramCommand_FLU(reader, input_buffer_FLU);
         bool is_valid_BRU = m_audio_processor_command_BRU->get_spectrogramCommand_BRU(reader2, input_buffer_BRU);
-        
+
         // finished with the sample reader
         delete reader;
         delete reader2;
@@ -154,17 +154,17 @@ void CommandDetector::run()
                 {
                 case 0:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "forward");
-                    move='f';
+                    move = 'f';
                     break;
 
                 case 1:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "up");
-                    move='u';
+                    move = 'u';
                     break;
 
                 case 2:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "left");
-                    move='l';
+                    move = 'l';
                     break;
 
                 default:
@@ -177,17 +177,17 @@ void CommandDetector::run()
                 {
                 case 0:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "backward");
-                    move='b';
+                    move = 'b';
                     break;
 
                 case 1:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "right");
-                    move='r';
+                    move = 'r';
                     break;
 
                 case 2:
                     Serial.printf("P(%.2f): Detect the word %s\n", best_score, "down");
-                    move='d';
+                    move = 'd';
                     break;
 
                 default:
@@ -211,9 +211,11 @@ void CommandDetector::run()
             delete m_audio_processor_command_BRU;
             m_audio_processor_command_BRU = NULL;
 
-            //Serial.println("destroyed Neural Network Command");
+            // Serial.println("destroyed Neural Network Command");
 
             process_command(move);
+
+            delay(2000);
         }
     }
 }
