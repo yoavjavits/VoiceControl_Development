@@ -1,10 +1,7 @@
 #ifndef COMMUNICATION_HANDLER_H
 #define COMMUNICATION_HANDLER_H
 
-#pragma once
-#include <Arduino.h>
-#include <ctype.h>	//for isDigit() and isAlpha() functions
-
+#include <ctype.h> //for isDigit() and isAlpha() functions
 
 class communication_handler
 {
