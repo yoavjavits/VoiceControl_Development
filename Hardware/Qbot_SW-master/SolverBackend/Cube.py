@@ -79,6 +79,7 @@ class Cube():
                 "z": self.rotate_z,
                 "z'": self.rotate_zprime
             }
+            
             #replace 2s in string with preceding letter
             while scramblestring.find("2") != -1:
                 index = scramblestring.find("2")
