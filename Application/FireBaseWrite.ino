@@ -9,12 +9,7 @@
   https://github.com/mobizt/Firebase-ESP-Client/blob/main/examples/RTDB/Basic/Basic.ino
 */
 
-#include <Arduino.h>
-#if defined(ESP32)
-  #include <WiFi.h>
-#elif defined(ESP8266)
-  #include <ESP8266WiFi.h>
-#endif
+#include <WiFi.h>
 #include <Firebase_ESP_Client.h>
 
 //Provide the token generation process info.
@@ -28,9 +23,6 @@
 
 /* 2. Define the API Key */
 #define API_KEY "AIzaSyAonx30i-i5ww0ftTMvQYrkc8eX2J1DOx4"
-
-/* 3. Define the project ID */
-#define FIREBASE_PROJECT_ID "Voice-Control"
 
 // Insert RTDB URLefine the RTDB URL */
 #define DATABASE_URL "https://voice-control-44c54-default-rtdb.firebaseio.com/" 
