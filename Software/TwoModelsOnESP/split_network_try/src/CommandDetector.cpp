@@ -81,6 +81,12 @@ void CommandDetector::run()
             // TODO: add bip sound
             digitalWrite(GPIO_NUM_2, LOW);
 
+            tone(18, 2000); // turn buzzer on
+            delay(1000);
+            pinMode(18, INPUT);
+
+
+
             delete m_nn_wake_word;
             m_nn_wake_word = NULL;
             delete m_audio_processor_wake_word;

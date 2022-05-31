@@ -7,6 +7,7 @@
 #include "SPIFFS.h"
 #include "CommandDetector.h"
 #include "CommandProcessor.h"
+#include <esp_task_wdt.h>
 
 // i2s config for reading from both channels of I2S
 i2s_config_t i2sMemsConfigBothChannels = {
@@ -70,5 +71,6 @@ void setup()
 
 void loop()
 {
+  esp_task_wdt_init(30, false);
   vTaskDelay(pdMS_TO_TICKS(1000));
 }

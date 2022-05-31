@@ -10,6 +10,7 @@
 #include <Firebase_ESP_Client.h>
 #include "addons/TokenHelper.h"
 #include "addons/RTDBHelper.h"
+#include <esp_task_wdt.h>
 
 FirebaseData fbdo;
 
@@ -57,31 +58,35 @@ void applicationTask(void *param)
   }
 }
 
-void ConnectToFireBase(){
+void ConnectToFireBase()
+{
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   Serial.print("Connecting to Wi-Fi");
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     Serial.print(".");
     delay(300);
   }
 
-   config.api_key = API_KEY;
+  config.api_key = API_KEY;
 
   /* Assign the RTDB URL (required) */
   config.database_url = DATABASE_URL;
 
   /* Sign up */
-  if (Firebase.signUp(&config, &auth, "", "")) {
+  if (Firebase.signUp(&config, &auth, "", ""))
+  {
     Serial.println("ok");
     signupOK = true;
   }
-  else {
+  else
+  {
     Serial.printf("%s\n", config.signer.signupError.message.c_str());
   }
 
   /* Assign the callback function for the long running token generation task */
-  config.token_status_callback = tokenStatusCallback; //see addons/TokenHelper.h
+  config.token_status_callback = tokenStatusCallback; // see addons/TokenHelper.h
 
   Firebase.begin(&config, &auth);
   Firebase.reconnectWiFi(true);
@@ -89,6 +94,8 @@ void ConnectToFireBase(){
 
 void setup()
 {
+  pinMode(18, INPUT); // buzzer
+
   Serial.begin(9600);
   Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
 
@@ -113,5 +120,6 @@ void setup()
 
 void loop()
 {
+  esp_task_wdt_init(30, false);
   vTaskDelay(pdMS_TO_TICKS(1000));
 }
