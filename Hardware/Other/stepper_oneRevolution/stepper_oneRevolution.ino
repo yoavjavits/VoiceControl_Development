@@ -54,22 +54,22 @@ void setup() {
 void loop() {
   // step one revolution  in one direction:
   Serial.println("clockwise");
-  myStepperX.step(stepsPerRevolution);
-  myStepperY.step(stepsPerRevolution);
-  myStepperZ.step(stepsPerRevolution);
-  myStepperE0.step(stepsPerRevolution);
-  myStepperE1.step(stepsPerRevolution);
+//  myStepperX.step(stepsPerRevolution);
+//  myStepperY.step(stepsPerRevolution);
+//  myStepperZ.step(stepsPerRevolution);
+//  myStepperE0.step(stepsPerRevolution);
+//  myStepperE1.step(stepsPerRevolution);
   myStepperO.step(stepsPerRevolution);
   digitalWrite(LED_BUILTIN, LOW);
   delay(2000);
 
   // step one revolution in the other direction:
   Serial.println("counterclockwise");
-  myStepperX.step(-stepsPerRevolution);
-  myStepperY.step(-stepsPerRevolution);
-  myStepperZ.step(-stepsPerRevolution);
-  myStepperE0.step(-stepsPerRevolution);
-  myStepperE1.step(-stepsPerRevolution);
+//  myStepperX.step(-stepsPerRevolution);
+//  myStepperY.step(-stepsPerRevolution);
+//  myStepperZ.step(-stepsPerRevolution);
+//  myStepperE0.step(-stepsPerRevolution);
+//  myStepperE1.step(-stepsPerRevolution);
   myStepperO.step(-stepsPerRevolution);
   digitalWrite(LED_BUILTIN, HIGH);
   
