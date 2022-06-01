@@ -79,6 +79,7 @@ void SendCommandToFireBase(String move)
 {
     if (Firebase.ready() && signupOK)
     {
+        String path = "Rotation/Direction/" + String(count);
         if (!Firebase.RTDB.setString(&fbdo, "Rotation/Direction", move))
         {
             Serial.println("FAILED");

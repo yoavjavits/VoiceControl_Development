@@ -70,22 +70,19 @@ void CommandDetector::run()
         // use quite a high threshold to prevent false positives
         if (output > 0.95 && start - m_last_detection > WAIT_PERIOD)
         {
-            // detected the wake word in several runs, move to the next state
             m_last_detection = start;
             Serial.printf("P(%.2f): Detect the word go\n", output);
 
             digitalWrite(GPIO_NUM_2, HIGH);
+            delay(500);
+
             isWakeWord = false;
             first_time = true;
-            delay(1000); // move to the next sector, so give it some time
-            // TODO: add bip sound
+            //tone(18, 2000); // turn buzzer on
+            delay(500);
+            
             digitalWrite(GPIO_NUM_2, LOW);
-
-            tone(18, 2000); // turn buzzer on
-            delay(1000);
             pinMode(18, INPUT);
-
-
 
             delete m_nn_wake_word;
             m_nn_wake_word = NULL;
@@ -204,7 +201,7 @@ void CommandDetector::run()
             digitalWrite(GPIO_NUM_2, HIGH);
             isWakeWord = true;
             first_time = true;
-            delay(750);
+            delay(250);
             digitalWrite(GPIO_NUM_2, LOW);
 
             delete m_nn_command_FLU;
