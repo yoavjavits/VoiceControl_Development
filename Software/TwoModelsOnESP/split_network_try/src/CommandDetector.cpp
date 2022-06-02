@@ -78,7 +78,7 @@ void CommandDetector::run()
 
             isWakeWord = false;
             first_time = true;
-            //tone(18, 2000); // turn buzzer on
+            tone(18, 2000); // turn buzzer on
             delay(500);
             
             digitalWrite(GPIO_NUM_2, LOW);
