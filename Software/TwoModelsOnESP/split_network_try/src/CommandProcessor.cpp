@@ -42,45 +42,50 @@ void process_command(char move)
 void MakeRightMove()
 {
     Serial2.println("R1");
-    SendCommandToFireBase("Right");
+    SendCommandToFireBase("Right", "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
 }
 
 void MakeForwardMove()
 {
     Serial2.println("F1");
-    SendCommandToFireBase("Foward");
+    SendCommandToFireBase("Foward", "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
 }
 
 void MakeBackwardMove()
 {
     Serial2.println("B1");
-    SendCommandToFireBase("Backward");
+    SendCommandToFireBase("Backward", "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
 }
 
 void MakeLeftMove()
 {
     Serial2.println("L1");
-    SendCommandToFireBase("Left");
+    SendCommandToFireBase("Left", "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
 }
 
 void MakeUpMove()
 {
     Serial2.println("U1");
-    SendCommandToFireBase("Up");
+    SendCommandToFireBase("Up", "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
 }
 
 void MakeDownMove()
 {
     Serial2.println("D1");
-    SendCommandToFireBase("Down");
+    SendCommandToFireBase("Down", "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB");
 }
 
-void SendCommandToFireBase(String move)
+void SendCommandToFireBase(String move, String state)
 {
     if (Firebase.ready() && signupOK)
     {
         String path = "Rotation/Direction/" + String(count);
-        if (!Firebase.RTDB.setString(&fbdo, "Rotation/Direction", move))
+        if (!Firebase.RTDB.setString(&fbdo, path, move))
+        {
+            Serial.println("FAILED");
+            Serial.println("REASON: " + fbdo.errorReason());
+        }
+        if (!Firebase.RTDB.setString(&fbdo, "state_cube", state))
         {
             Serial.println("FAILED");
             Serial.println("REASON: " + fbdo.errorReason());

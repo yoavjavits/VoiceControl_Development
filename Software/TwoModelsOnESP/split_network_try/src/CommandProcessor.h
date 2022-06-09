@@ -12,6 +12,6 @@ void MakeLeftMove();
 void MakeUpMove();
 void MakeDownMove();
 
-void SendCommandToFireBase(String move);
+void SendCommandToFireBase(String move, String state);
 
 #endif

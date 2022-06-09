@@ -80,7 +80,7 @@ void CommandDetector::run()
             first_time = true;
             tone(18, 2000); // turn buzzer on
             delay(500);
-            
+
             digitalWrite(GPIO_NUM_2, LOW);
             pinMode(18, INPUT);
 
@@ -96,13 +96,13 @@ void CommandDetector::run()
     {
         if (first_time)
         {
+
             m_nn_command_FLU = new NeuralNetworkCommand_FLU();
             m_nn_command_BRU = new NeuralNetworkCommand_BRU();
 
             m_audio_processor_command_FLU = new AudioProcessorCommand_FLU(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
             m_audio_processor_command_BRU = new AudioProcessorCommand_BRU(AUDIO_LENGTH, WINDOW_SIZE, STEP_SIZE, POOLING_SIZE);
 
-            Serial.println("Created Neural Network Command");
             first_time = false;
         }
 
@@ -112,6 +112,8 @@ void CommandDetector::run()
         // get access to the samples that have been read in
         RingBufferAccessor *reader = m_sample_provider->getRingBufferReader();
         RingBufferAccessor *reader2 = m_sample_provider->getRingBufferReader();
+
+        Serial.println("after reader");
 
         // rewind by 1 second
         reader->rewind(16000);
@@ -133,6 +135,8 @@ void CommandDetector::run()
         // get the prediction for the spectrogram
         NNResult_FLU result_FLU = m_nn_command_FLU->predictCommand_FLU();
         NNResult_BRU result_BRU = m_nn_command_BRU->predictCommand_BRU();
+
+        Serial.println("got here");
 
         float best_score_FLU = result_FLU.score;
         int best_index_FLU = result_FLU.index;
