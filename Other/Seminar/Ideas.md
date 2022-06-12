@@ -12,6 +12,7 @@ https://www.sciencedirect.com/science/article/abs/pii/S2211285520302950
 https://www.biorxiv.org/content/10.1101/2022.03.10.483755v1
 https://onlinelibrary.wiley.com/doi/full/10.1111/j.1442-9071.2011.02590.x
 https://www.science.org/doi/abs/10.1126/science.295.5557.1018
+https://www.telehouse.com/astounding-ways-bionics-is-changing-lives-for-the-disabled/
 
 Arduino Connection:
 https://github.com/mike-bionic/IoT-core
