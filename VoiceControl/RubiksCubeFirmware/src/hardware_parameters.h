@@ -10,9 +10,9 @@ static constexpr int max_angle = 250;
 static constexpr long baudrate = 115200;
 
 //----------------- gripper F ----------------- MOT4 external motor
-static constexpr int gripperF_step = 48;
-static constexpr int gripperF_dir = 42;
-static constexpr int gripperF_en = 44;
+static constexpr int gripperF_step = 32;
+static constexpr int gripperF_dir = 47;
+static constexpr int gripperF_en = 45;
 
 //----------------- gripper B ----------------- MOT1 E1 motor
 static constexpr int gripperB_step = 36;
