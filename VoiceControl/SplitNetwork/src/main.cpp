@@ -1,10 +1,7 @@
 #include <Arduino.h>
-#include <WiFi.h>
 #include <driver/i2s.h>
-#include <esp_task_wdt.h>
 #include "I2SMicSampler.h"
 #include "config.h"
-#include "SPIFFS.h"
 #include "CommandDetector.h"
 #include "CommandProcessor.h"
 #include <esp_task_wdt.h>
@@ -49,6 +46,8 @@ void applicationTask(void *param)
 
 void setup()
 {
+  pinMode(18, INPUT); // buzzer
+
   Serial.begin(9600);
   Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
 
