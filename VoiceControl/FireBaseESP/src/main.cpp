@@ -97,7 +97,7 @@ bool execute_comand(char command, int indicator)
   switch (indicator)
   {
   case 1:
-    to_send +=  "1";
+    to_send += "1";
     break;
 
   case 2:
@@ -113,105 +113,18 @@ bool execute_comand(char command, int indicator)
     break;
   }
 
-  switch (command)
+  if (command == 'S')
   {
-  case 'R':
-    SendCommandToFireBase(to_send);
-    Serial.write("Right");
-    executed = true;
-    break;
-
-  case 'r':
-    SendCommandToFireBase(to_send);
-    Serial.write("Right CounterClockwise");
-    executed = true;
-
-    break;
-
-  case 'L':
-    SendCommandToFireBase(to_send);
-    Serial.write("Left");
-    executed = true;
-
-    break;
-
-  case 'l':
-    SendCommandToFireBase(to_send);
-    Serial.write("Left CounterClockwise");
-    executed = true;
-
-    break;
-
-  case 'F':
-    SendCommandToFireBase(to_send);
-    Serial.write("Forward");
-    executed = true;
-
-    break;
-
-  case 'f':
-    SendCommandToFireBase(to_send);
-    Serial.write("Forward CounterClockwise");
-    executed = true;
-
-    break;
-
-  case 'B':
-    SendCommandToFireBase(to_send);
-    Serial.write("Backward");
-    executed = true;
-
-    break;
-
-  case 'b':
-    SendCommandToFireBase(to_send);
-    Serial.write("Backward CounterClockwise");
-    executed = true;
-
-    break;
-
-  case 'U':
-    SendCommandToFireBase(to_send);
-    Serial.write("Up");
-    executed = true;
-
-    break;
-
-  case 'u':
-    SendCommandToFireBase(to_send);
-    Serial.write("Up CounterClockwise");
-    executed = true;
-
-    break;
-
-  case 'D':
-    SendCommandToFireBase(to_send);
-    Serial.write("Down");
-    executed = true;
-
-    break;
-
-  case 'd':
-    SendCommandToFireBase(to_send);
-    Serial.write("Down CounterClockwise");
-    executed = true;
-
-    break;
-
-  case 'S':
     SendCommandToFireBase("Solve");
-    Serial.write("Solve");
+    Serial.println("Solve");
     executed = true;
-
-    break;
-
-  default:
-    Serial.write("NUL");
   }
 
-  if (executed)
+  else
   {
-    Serial.write("ACK"); // sending ACK
+    SendCommandToFireBase(to_send);
+    Serial.println(to_send);
+    executed = true;
   }
 
   return executed; // returns true if done moving

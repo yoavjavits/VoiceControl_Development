@@ -19,7 +19,7 @@ bool CommunicatioHandler::read_command()
 		{
 			command_ = buffer_[0];
 			indicator_ = char_to_int(buffer_[1]);
-			flush_buffer();
+			// flush_buffer();
 			return true;
 		}
 		else // invalid command

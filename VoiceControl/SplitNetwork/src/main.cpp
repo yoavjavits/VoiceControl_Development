@@ -6,6 +6,11 @@
 #include "CommandProcessor.h"
 #include <esp_task_wdt.h>
 
+char buffer_[100];
+int buffer_len;
+
+#define DELAYFORWHITESPACE 400
+
 // i2s config for reading from both channels of I2S
 i2s_config_t i2sMemsConfigBothChannels = {
     .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
@@ -35,30 +40,32 @@ void applicationTask(void *param)
   const TickType_t xMaxBlockTime = pdMS_TO_TICKS(100);
   while (true)
   {
-    // buffer_len = 0;
+    buffer_len = 0;
 
-    // if (Serial2.available() >= 2)
-    // {
-    //   for (int i = 0; Serial2.available(); i++)
-    //   {
-    //     buffer_[i] = Serial2.read();
-    //     buffer_len++;
-    //   }
+    if (Serial2.available() >= 2)
+    {
+      for (int i = 0; Serial2.available(); i++)
+      {
+        buffer_[i] = Serial2.read();
+        buffer_len++;
+      }
 
-    //   int whiteSpaces = 1;
-    //   for (int i = 0; i < buffer_len; i++)
-    //   {
-    //     if (buffer_[i] == ' ')
-    //     {
-    //       whiteSpaces++;
-    //     }
-    //   }
+      int whiteSpaces = 1;
+      for (int i = 0; i < buffer_len; i++)
+      {
+        if (buffer_[i] == ' ')
+        {
+          whiteSpaces++;
+        }
+      }
 
-    //   Serial2.println(buffer_);
+      Serial.println(buffer_);
+      Serial2.println(buffer_);
 
-    //   delay(whiteSpaces * DELAYFORWHITESPACE);
-    //   ESP.restart();
-    // }
+      delay(whiteSpaces * DELAYFORWHITESPACE);
+      ESP.restart();
+    }
+
     // wait for some audio samples to arrive
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
     if (ulNotificationValue > 0)

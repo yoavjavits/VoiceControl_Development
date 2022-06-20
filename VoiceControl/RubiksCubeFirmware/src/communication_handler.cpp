@@ -11,7 +11,7 @@ bool communication_handler::read_command()
 
 	if (Serial2.available() >= 2) // if 2 bytes are stored in the rx buffer
 	{
-		for (int i = 0; Serial2.available(); i++) // rx reading buffer into locla buffer array
+		for (int i = 0; Serial2.available() && i < 2; i++) // rx reading buffer into locla buffer array
 		{
 			buffer_[i] = Serial2.read();
 		}
@@ -19,7 +19,7 @@ bool communication_handler::read_command()
 		{
 			command_ = buffer_[0];
 			indicator_ = char_to_int(buffer_[1]);
-			flush_buffer();
+			// flush_buffer();
 			return true;
 		}
 		else // invalid command

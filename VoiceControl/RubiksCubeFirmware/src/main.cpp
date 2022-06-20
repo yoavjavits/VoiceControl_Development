@@ -7,13 +7,17 @@
 
 Solver qbot;
 
-void setup() 
+void setup()
 {
 	qbot.init(baudrate);
 }
 
-void loop() 
+void loop()
 {
-	while(!qbot.communication_handle.read_command());
-	while(!qbot.execute_comand(qbot.communication_handle.get_cmd(), qbot.communication_handle.get_indicator()));
+	while (!qbot.communication_handle.read_command())
+		;
+	while (!qbot.execute_comand(qbot.communication_handle.get_cmd(), qbot.communication_handle.get_indicator()))
+		;
+
+	delay(4000);
 }
