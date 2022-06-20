@@ -24,7 +24,7 @@ bool CommunicatioHandler::read_command()
 		}
 		else // invalid command
 		{
-			Serial.write('NUL');
+			Serial.write("NUL");
 			return false;
 		}
 	}

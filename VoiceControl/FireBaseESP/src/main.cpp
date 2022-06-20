@@ -8,6 +8,8 @@
 #include "communication_handler.h"
 #include <string>
 
+using namespace std;
+
 #define WIFI_SSID "TechPublic"
 #define WIFI_PASSWORD ""
 
@@ -89,8 +91,27 @@ bool execute_comand(char command, int indicator)
 {
   bool executed = false;
   unsigned long current_time = millis();
-  char ind = static_cast<char>(indicator) + 48;
-  String to_send = String(1, command) + String(1, ind);
+  String to_send = "";
+  to_send += command;
+
+  switch (indicator)
+  {
+  case 1:
+    to_send +=  "1";
+    break;
+
+  case 2:
+    to_send += "2";
+    break;
+
+  case 3:
+    to_send += "3";
+    break;
+
+  default:
+    to_send += "0";
+    break;
+  }
 
   switch (command)
   {
