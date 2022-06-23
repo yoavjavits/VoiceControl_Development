@@ -81,6 +81,7 @@ void applicationTask(void *param)
 void setup()
 {
   pinMode(18, INPUT); // buzzer
+  pinMode(WIFIPIN, OUTPUT);
 
   Serial.begin(9600);
   Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);

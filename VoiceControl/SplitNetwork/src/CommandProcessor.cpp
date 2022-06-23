@@ -4,6 +4,8 @@
 
 extern SoftwareSerial mySerial;
 
+#define WIFIPIN 35
+
 void process_command(char move)
 {
     switch (move)
@@ -41,8 +43,10 @@ void process_command(char move)
 void MakeRightMove()
 {
     Serial2.println("R1");
-    mySerial.println("R1");
     Serial.println("R1");
+
+    digitalWrite(WIFIPIN, HIGH);
+    delay(500);
 }
 
 void MakeForwardMove()
