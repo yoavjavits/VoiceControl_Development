@@ -26,6 +26,8 @@ FirebaseConfig config;
 
 bool signupOK = false;
 
+SoftwareSerial mySerial(16, 17);
+
 CommunicatioHandler communication_handler;
 
 void ConnectToFireBase()
@@ -65,9 +67,9 @@ void ConnectToFireBase()
 void setup()
 {
   Serial.begin(9600);
-  Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
+  mySerial.begin(9600);
 
-  communication_handler.init_communication(115200);
+  // communication_handler.init_communication();
 
   ConnectToFireBase();
 
@@ -132,92 +134,99 @@ bool execute_comand(char command, int indicator)
 
 void loop()
 {
-  String commands = "None";
-
-  while (!communication_handler.read_command())
+  char rd;
+  if (mySerial.available())
   {
-    if (Firebase.RTDB.getString(&fbdo, "/solver"))
-    {
-      if (fbdo.dataType() == "string")
-      {
-        commands = fbdo.stringData();
-        if (commands != "None")
-        {
-          Serial.println(commands);
-          Serial2.println(commands);
-
-          // TODO delay
-
-          if (Firebase.ready() && signupOK)
-          {
-            String path = "/solver";
-            if (!Firebase.RTDB.setString(&fbdo, path, "None"))
-            {
-              Serial.println("FAILED");
-              Serial.println("REASON: " + fbdo.errorReason());
-            }
-          }
-        }
-      }
-
-      commands = "None";
-    }
-
-    if (Firebase.RTDB.getString(&fbdo, "/scramble"))
-    {
-      if (fbdo.dataType() == "string")
-      {
-        commands = fbdo.stringData();
-        if (commands != "None")
-        {
-          Serial.println(commands);
-          Serial2.println(commands);
-
-          // TODO delay
-
-          if (Firebase.ready() && signupOK)
-          {
-            String path = "/scramble";
-            if (!Firebase.RTDB.setString(&fbdo, path, "None"))
-            {
-              Serial.println("FAILED");
-              Serial.println("REASON: " + fbdo.errorReason());
-            }
-          }
-        }
-      }
-
-      commands = "None";
-    }
-
-    else if (Firebase.RTDB.getString(&fbdo, "/hint"))
-    {
-      if (fbdo.dataType() == "string")
-      {
-        commands = fbdo.stringData();
-        if (commands != "None")
-        {
-          Serial.println(commands);
-          Serial2.println(commands);
-
-          // TODO delay
-
-          if (Firebase.ready() && signupOK)
-          {
-            String path = "/hint";
-            if (!Firebase.RTDB.setString(&fbdo, path, "None"))
-            {
-              Serial.println("FAILED");
-              Serial.println("REASON: " + fbdo.errorReason());
-            }
-          }
-        }
-      }
-
-      commands = "None";
-    }
+    rd = mySerial.read();
+    Serial.print(rd);
   }
 
-  while (!execute_comand(communication_handler.get_cmd(), communication_handler.get_indicator()))
-    ;
+  // String commands = "None";
+
+  // while (!communication_handler.read_command())
+  // {
+  //   if (Firebase.RTDB.getString(&fbdo, "/solver"))
+  //   {
+  //     if (fbdo.dataType() == "string")
+  //     {
+  //       commands = fbdo.stringData();
+  //       if (commands != "None")
+  //       {
+  //         Serial.println(commands);
+  //         mySerial.println(commands);
+
+  //         // TODO delay
+
+  //         if (Firebase.ready() && signupOK)
+  //         {
+  //           String path = "/solver";
+  //           if (!Firebase.RTDB.setString(&fbdo, path, "None"))
+  //           {
+  //             Serial.println("FAILED");
+  //             Serial.println("REASON: " + fbdo.errorReason());
+  //           }
+  //         }
+  //       }
+  //     }
+
+  //     commands = "None";
+  //   }
+
+  //   if (Firebase.RTDB.getString(&fbdo, "/scramble"))
+  //   {
+  //     if (fbdo.dataType() == "string")
+  //     {
+  //       commands = fbdo.stringData();
+  //       if (commands != "None")
+  //       {
+  //         Serial.println(commands);
+  //         mySerial.println(commands);
+
+  //         // TODO delay
+
+  //         if (Firebase.ready() && signupOK)
+  //         {
+  //           String path = "/scramble";
+  //           if (!Firebase.RTDB.setString(&fbdo, path, "None"))
+  //           {
+  //             Serial.println("FAILED");
+  //             Serial.println("REASON: " + fbdo.errorReason());
+  //           }
+  //         }
+  //       }
+  //     }
+
+  //     commands = "None";
+  //   }
+
+  //   else if (Firebase.RTDB.getString(&fbdo, "/hint"))
+  //   {
+  //     if (fbdo.dataType() == "string")
+  //     {
+  //       commands = fbdo.stringData();
+  //       if (commands != "None")
+  //       {
+  //         Serial.println(commands);
+  //         mySerial.println(commands);
+
+  //         // TODO delay
+
+  //         if (Firebase.ready() && signupOK)
+  //         {
+  //           String path = "/hint";
+  //           if (!Firebase.RTDB.setString(&fbdo, path, "None"))
+  //           {
+  //             Serial.println("FAILED");
+  //             Serial.println("REASON: " + fbdo.errorReason());
+  //           }
+  //         }
+  //       }
+  //     }
+
+  //     commands = "None";
+  //   }
+  // }
+
+  // while (!execute_comand(communication_handler.get_cmd(), communication_handler.get_indicator()))
+  //   ;
 }

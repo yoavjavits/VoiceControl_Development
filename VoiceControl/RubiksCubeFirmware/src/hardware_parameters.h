@@ -3,10 +3,8 @@
 
 //------------------ general ------------------
 static constexpr int steps_per_rot = 200;
-// static constexpr int gripper_speed = 190;
-// static constexpr int slider_speed = 270; // 150;
-static constexpr int gripper_speed = 100;
-static constexpr int slider_speed = 180; // 150;
+static constexpr int gripper_speed = 190;
+static constexpr int slider_speed = 270;
 static constexpr int max_angle = 250;
 
 static constexpr long baudrate = 115200;
@@ -26,12 +24,12 @@ static constexpr int gripperL_step = 26;
 static constexpr int gripperL_dir = 28;
 static constexpr int gripperL_en = 24;
 
-//----------------- gripper R ----------------- MOT3 z motor
+//----------------- gripper R ----------------- MOT3 Z motor
 static constexpr int gripperR_step = 46;
 static constexpr int gripperR_dir = 48;
 static constexpr int gripperR_en = A8;
 
-//----------------- slider y ----------------- MOT5 y motor
+//----------------- slider y ----------------- MOT5 Y motor
 static constexpr int sliderY_step = A6;
 static constexpr int sliderY_dir = A7;
 static constexpr int sliderY_en = A2;

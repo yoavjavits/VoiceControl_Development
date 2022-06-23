@@ -1,7 +1,8 @@
 #ifndef COMMUNICATION_HANDLER_H
 #define COMMUNICATION_HANDLER_H
 
-#include <ctype.h> //for isDigit() and isAlpha() functions
+#include <ctype.h>
+#include <SoftwareSerial.h>
 
 class CommunicatioHandler
 {
@@ -10,16 +11,18 @@ public:
 	bool read_command();
 	char get_cmd();
 	int get_indicator();
-	void init_communication(unsigned long baudrate);
 
 private:
 	char command_;
 	int indicator_;
 	char buffer_[2];
 	unsigned long starting_time_;
+	SoftwareSerial mySerial;
+
 	void flush_buffer();
 	bool validate_cmd(char command, int indicator);
 	int char_to_int(char x);
+	// void CommunicatioHandler::init_communication();
 };
 
 #endif

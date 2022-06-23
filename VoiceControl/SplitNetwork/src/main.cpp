@@ -5,6 +5,9 @@
 #include "CommandDetector.h"
 #include "CommandProcessor.h"
 #include <esp_task_wdt.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(14, 12);
 
 char buffer_[100];
 int buffer_len;
@@ -42,11 +45,11 @@ void applicationTask(void *param)
   {
     buffer_len = 0;
 
-    if (Serial2.available() >= 2)
+    if (mySerial.available() >= 2)
     {
-      for (int i = 0; Serial2.available(); i++)
+      for (int i = 0; mySerial.available(); i++)
       {
-        buffer_[i] = Serial2.read();
+        buffer_[i] = mySerial.read();
         buffer_len++;
       }
 
@@ -81,6 +84,8 @@ void setup()
 
   Serial.begin(9600);
   Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
+
+  mySerial.begin(9600);
 
   delay(1000);
   Serial.println("Starting up");
