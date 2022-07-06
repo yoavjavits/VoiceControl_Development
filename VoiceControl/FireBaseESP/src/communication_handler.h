@@ -2,7 +2,6 @@
 #define COMMUNICATION_HANDLER_H
 
 #include <ctype.h>
-#include <SoftwareSerial.h>
 
 class CommunicatioHandler
 {
@@ -17,7 +16,6 @@ private:
 	int indicator_;
 	char buffer_[2];
 	unsigned long starting_time_;
-	SoftwareSerial mySerial;
 
 	void flush_buffer();
 	bool validate_cmd(char command, int indicator);

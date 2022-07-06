@@ -28,8 +28,6 @@ FirebaseConfig config;
 
 bool signupOK = false;
 
-SoftwareSerial mySerial(16, 17);
-
 CommunicatioHandler communication_handler;
 
 void ConnectToFireBase()
@@ -69,13 +67,13 @@ void ConnectToFireBase()
 void setup()
 {
   Serial.begin(9600);
-  mySerial.begin(9600);
+  Serial2.begin(115200, SERIAL_8N1, RXp2, TXp2);
 
   pinMode(WIFIPIN, INPUT);
 
   // communication_handler.init_communication();
 
-  // ConnectToFireBase();
+  ConnectToFireBase();
 
   delay(1000);
 }
@@ -133,6 +131,9 @@ bool execute_comand(char command, int indicator)
     executed = true;
   }
 
+  delay(1000);
+  SendCommandToFireBase("None");
+
   return executed; // returns true if done moving
 }
 
@@ -144,14 +145,14 @@ void loop()
 
   while (!communication_handler.read_command())
   {
-    if (HIGH == digitalRead(WIFIPIN))
+    if (HIGH == digitalRead(WIFIPIN) && is_wifi_enabled)
     {
       WiFi.disconnect();
       is_wifi_enabled = false;
       Serial.println("WiFi disabled");
     }
 
-    else if (Firebase.RTDB.getString(&fbdo, "/solver"))
+    else if (is_wifi_enabled && Firebase.RTDB.getString(&fbdo, "/solver"))
     {
       if (fbdo.dataType() == "string")
       {
@@ -159,7 +160,7 @@ void loop()
         if (commands != "None")
         {
           Serial.println(commands);
-          mySerial.println(commands);
+          Serial2.println(commands);
 
           // TODO delay
 
@@ -178,7 +179,7 @@ void loop()
       commands = "None";
     }
 
-    else if (Firebase.RTDB.getString(&fbdo, "/scramble"))
+    else if (is_wifi_enabled && Firebase.RTDB.getString(&fbdo, "/scramble"))
     {
       if (fbdo.dataType() == "string")
       {
@@ -186,7 +187,7 @@ void loop()
         if (commands != "None")
         {
           Serial.println(commands);
-          mySerial.println(commands);
+          Serial2.println(commands);
 
           // TODO delay
 
@@ -205,7 +206,7 @@ void loop()
       commands = "None";
     }
 
-    else if (Firebase.RTDB.getString(&fbdo, "/hint"))
+    else if (is_wifi_enabled && Firebase.RTDB.getString(&fbdo, "/hint"))
     {
       if (fbdo.dataType() == "string")
       {
@@ -213,7 +214,7 @@ void loop()
         if (commands != "None")
         {
           Serial.println(commands);
-          mySerial.println(commands);
+          Serial2.println(commands);
 
           // TODO delay
 
@@ -233,9 +234,17 @@ void loop()
     }
   }
 
+  Serial.println("we passed");
+
   if (!is_wifi_enabled)
   {
     WiFi.reconnect();
+    Serial.print("reconnecting to WiFi");
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      Serial.print(".");
+      delay(100);
+    }
     Serial.println("WiFi reconnected");
   }
 

@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include "communication_handler.h"
 
-extern SoftwareSerial mySerial;
-
 CommunicatioHandler::CommunicatioHandler() : command_{'\n'}, indicator_{0}, buffer_{0}, starting_time_{millis()}
 {
 }
@@ -11,11 +9,11 @@ bool CommunicatioHandler::read_command()
 {
 	static constexpr int timeout = 1000;
 
-	if (mySerial.available() >= 2) // if 2 bytes are stored in the rx buffer
+	if (Serial2.available() >= 2) // if 2 bytes are stored in the rx buffer
 	{
-		for (int i = 0; mySerial.available() && i < 2; i++) // rx reading buffer into locla buffer array
+		for (int i = 0; Serial2.available() && i < 2; i++) // rx reading buffer into locla buffer array
 		{
-			buffer_[i] = mySerial.read();
+			buffer_[i] = Serial2.read();
 		}
 		if (validate_cmd(buffer_[0], buffer_[1])) // validating command received
 		{
@@ -26,7 +24,7 @@ bool CommunicatioHandler::read_command()
 		}
 		else // invalid command
 		{
-			Serial.write("NUL");
+			//Serial.write("NUL");
 			return false;
 		}
 	}
@@ -57,9 +55,9 @@ int CommunicatioHandler::get_indicator()
 
 void CommunicatioHandler::flush_buffer()
 {
-	while (mySerial.available())
+	while (Serial2.available())
 	{
-		char temp_buffer = mySerial.read();
+		char temp_buffer = Serial2.read();
 	}
 }
 
