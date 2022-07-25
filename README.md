@@ -1,3 +1,2 @@
-# IOT_PROJECT
+# Voice Control
 
-Main file for contain all the other repositories.
